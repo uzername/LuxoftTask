@@ -11,7 +11,6 @@ struct Figure
   int y;
 };
 
-
 struct Logic::Impl
 {
   QList<Figure> figures;

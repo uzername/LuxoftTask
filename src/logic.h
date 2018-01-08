@@ -2,6 +2,7 @@
 #include <memory>
 #include <QAbstractListModel>
 
+//that is not a logic, it is a middleware between qml and actual code
 class Logic: public QAbstractListModel
 {
     Q_OBJECT
@@ -10,7 +11,6 @@ public:
     enum GlobalConstants {
         BOARD_SIZE = 8
     };
-
     enum Roles {
         Type = Qt::UserRole,
         PositionX,
