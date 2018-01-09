@@ -2,7 +2,7 @@
 #include <memory>
 #include <QAbstractListModel>
 
-//that is not a logic, it is a middleware between qml and actual code
+//that is not a logic, it is a middleware between qml and actual code. Constructed by Ancients
 class Logic: public QAbstractListModel
 {
     Q_OBJECT

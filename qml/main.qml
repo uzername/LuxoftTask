@@ -1,14 +1,13 @@
-import QtQuick 2.4
+//constructed by Ancients
+import QtQuick 2.7
 import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
-//SomeName: this qml is useless! It is declarative, just like Prolog! I am being forced to go with that!
 ApplicationWindow {
     title: qsTr("Chess")
     visible: true
     width: 800
     height: 600
-    
     property int squareSize: 70
     //Use that somewhere else, but not here
 /*
@@ -17,14 +16,49 @@ ApplicationWindow {
       {'imgPath' : "/images/black_pawn.svg"},
     ]
 */
+
+    StateGroup {
+        //this gnome switches the screens and buttons. He stands over here
+    id: screenSwitchingGnome
+    states: [
+        //a common approach is to change buttons visibility on certain button's action, but:
+        //usage of PropertyChanges enables an item's property values to be changed when it changes between states (experimental!)
+            State {
+                name: "screen1"
+                PropertyChanges { target: startButton; visible: true  }
+                PropertyChanges { target: stopButton; visible: false  }
+                PropertyChanges { target: saveButton; visible: false  }
+                PropertyChanges { target: loadButton; visible: true   }
+                PropertyChanges { target: prevAndNext; visible: false }
+            },
+            State {
+                name: "screen2"
+                PropertyChanges { target: startButton; visible: false  }
+                PropertyChanges { target: stopButton;  visible: true   }
+                PropertyChanges { target: saveButton;  visible: true   }
+                PropertyChanges { target: loadButton;  visible: false  }
+                PropertyChanges { target: prevAndNext; visible: false  }
+            },
+            State {
+                name: "screen3"
+                PropertyChanges { target: startButton; visible: true }
+                PropertyChanges { target: stopButton;  visible: false  }
+                PropertyChanges { target: saveButton;  visible: false }
+                PropertyChanges { target: loadButton;  visible: true  }
+                PropertyChanges { target: prevAndNext; visible: true  }
+            }
+        ]
+    }
+
     Item {
       id: gameBoard
       x: 0
       y: 0
-      width : logic.boardSize * squareSize
-      height: logic.boardSize * squareSize
+      width : squareSize*8 //logic.boardSize
+      height: squareSize*8 //logic.boardSize
       
       Image {
+        id: chessBoardImg
         source: "/images/chess_board.jpg"
         height: gameBoard.height
         width: gameBoard.width
@@ -33,16 +67,19 @@ ApplicationWindow {
       // http://doc.qt.io/qt-5/qml-qtquick-repeater.html
       //this approach is unnatural. A better way: http://doc.qt.io/qt-5/qtqml-cppintegration-overview.html
       //well, that kind of model and repeater may actually work.
+
+      //Repeater {
+         //sort of qlistmodel
+      //  model: logic
 /*
-      Repeater {
-        model: logic
-*/
         Image { //a chess piece on gamefield
           height: squareSize
           width : squareSize
-
-          x: squareSize * positionX
-          y: squareSize * positionY
+           //taken from model
+         // x: squareSize * positionX
+         // y: squareSize * positionY
+          x: squareSize
+          y: squareSize
 
           //source: images[type].imgPath
           //create mouseArea to handle mouse events
@@ -71,20 +108,88 @@ ApplicationWindow {
             }
           }
         }
-     /* } */
+        */
+     // }
+    }
+    Column {
+        anchors.left: gameBoard.right
+        anchors.right: parent.right
+        anchors.leftMargin: 10
+        anchors.rightMargin: 10
+    Button {
+      id: startButton
+
+      visible: true
+      text: "Start"
+       anchors.right: parent.right
+       anchors.left: parent.left
+      onClicked: {
+        //logic.clear();
+
+        if ((screenSwitchingGnome.state == "screen1")||(screenSwitchingGnome.state == "")||(screenSwitchingGnome.state == "screen3")) {
+            screenSwitchingGnome.state = "screen2";
+        }
+
+      }
     }
 
     Button {
-      id: startButton
-      anchors.left: gameBoard.right
-      anchors.right: parent.right
-      anchors.leftMargin: 10
-      anchors.rightMargin: 10
-      
-      text: "Clear"
+        id: stopButton
+        visible: false;
+        text: "Stop"
+        anchors.right: parent.right
+        anchors.left: parent.left
+        onClicked: {
 
-      onClicked: {
-        //logic.clear();
-      }
+          if (screenSwitchingGnome.state == "screen2") {
+             screenSwitchingGnome.state = "screen1";
+
+          }
+
+        }
+
     }
+    Button {
+       id: loadButton
+       text:"Load"
+       visible:true;
+       anchors.right: parent.right
+       anchors.left: parent.left
+
+       onClicked: {
+          if ((screenSwitchingGnome.state == "screen1")||(screenSwitchingGnome.state == "screen3")) {
+              screenSwitchingGnome.state = "screen3"
+          }
+       }
+
+    }
+    Button {
+        anchors.right: parent.right
+        anchors.left: parent.left
+
+       id: saveButton
+       text:"Save"
+       visible:false;
+       onClicked: {
+
+       }
+
+    }
+    Row {
+        id:prevAndNext
+        anchors.right: parent.right
+        anchors.left: parent.left
+        visible:false
+        Button {
+           id: prevButton
+           text: "Prev"
+        }
+        Button {
+           id: nextButton
+           text: "Next"
+        }
+    }
+
+    }
+
 }
