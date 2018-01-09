@@ -7,7 +7,8 @@ QT += qml quick widgets
 
 SOURCES += src/main.cpp \
     src/logic.cpp \
-    src/chesspiecemetadata.cpp
+    src/chesspiecemetadata.cpp \
+    src/chessfieldpieces.cpp
 
 RESOURCES += qml.qrc
 
@@ -16,4 +17,5 @@ QML_IMPORT_PATH =
 
 HEADERS += \
     src/logic.h \
-    src/chesspiecemetadata.h
+    src/chesspiecemetadata.h \
+    src/chessfieldpieces.h
