@@ -9,8 +9,18 @@ void ChessPieceMetadataBehavior::setCurrentBehaviorType(const ChessPieceBehavior
     currentBehaviorType = value;
 }
 
-ChessPieceMetadataBehavior::ChessPieceMetadataBehavior() {
+ChessPieceSideTypes ChessPieceMetadataBehavior::getCurrentSideType() const
+{
+    return currentSideType;
+}
 
+void ChessPieceMetadataBehavior::setCurrentSideType(const ChessPieceSideTypes &value)
+{
+    currentSideType = value;
+}
+
+ChessPieceMetadataBehavior::ChessPieceMetadataBehavior() {
+    this->currentMovementPattern = std::vector();
 }
 
 ChessPiecePatternTypes ChessPiecePattern::getInstanceChessPiecePatternType() const
@@ -46,7 +56,11 @@ ChessPiecePointPattern::ChessPiecePointPattern(ChessIntegerCoordType in_XPoint, 
     this->YPoint = in_YPoint;
 }
 
-ChessIntegerCoordType ChessPiecePointPattern::getXPoint() const
-{
+ChessIntegerCoordType ChessPiecePointPattern::getXPoint() const {
     return XPoint;
+}
+
+KingBehavior::KingBehavior()
+    :ChessPieceMetadataBehavior() {
+    this->currentBehaviorType = KING_TYPE;
 }

@@ -59,7 +59,7 @@ ApplicationWindow {
       
       Image {
         id: chessBoardImg
-        source: "/images/chess_board.jpg"
+        source: mylogic.boardPathToImageBackground // "/images/chess_board.jpg"
         height: gameBoard.height
         width: gameBoard.width
       }
@@ -68,9 +68,9 @@ ApplicationWindow {
       //this approach is unnatural. A better way: http://doc.qt.io/qt-5/qtqml-cppintegration-overview.html
       //well, that kind of model and repeater may actually work.
 
-      //Repeater {
+      Repeater {
          //sort of qlistmodel
-      //  model: logic
+        model: mylogic
 /*
         Image { //a chess piece on gamefield
           height: squareSize
@@ -109,7 +109,7 @@ ApplicationWindow {
           }
         }
         */
-     // }
+      }
     }
     Column {
         anchors.left: gameBoard.right
