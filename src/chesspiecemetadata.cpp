@@ -20,7 +20,7 @@ void ChessPieceMetadataBehavior::setCurrentSideType(const ChessPieceSideTypes &v
 }
 
 ChessPieceMetadataBehavior::ChessPieceMetadataBehavior() {
-    this->currentMovementPattern = std::vector();
+    this->currentMovementPattern = std::vector<ChessPiecePattern>();
 }
 
 ChessPiecePatternTypes ChessPiecePattern::getInstanceChessPiecePatternType() const
@@ -63,4 +63,11 @@ ChessIntegerCoordType ChessPiecePointPattern::getXPoint() const {
 KingBehavior::KingBehavior()
     :ChessPieceMetadataBehavior() {
     this->currentBehaviorType = KING_TYPE;
+}
+
+//========
+std::shared_ptr<KingBehavior> instKingBehavior;
+void initBehaviors() {
+    KingBehavior KingBehaviorInstance = KingBehavior();
+     instKingBehavior = std::shared_ptr<KingBehavior>(&KingBehaviorInstance);
 }

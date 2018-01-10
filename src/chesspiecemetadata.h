@@ -20,28 +20,6 @@ typedef enum ChessPieceSideTypes { BLACK, WHITE } ChessPieceSideTypes;
 typedef enum ChessPiecePatternVectorTypes {
     NORTH, SOUTH, EAST, WEST, NORTHEAST, SOUTHEAST, SOUTHWEST, NORTHWEST
 } ChessPiecePatternVectorTypes;
-/**
- * @brief The ChessPieceMetadataBehavior base class declares how a figurine moves and attacks
- */
-class ChessPieceMetadataBehavior {
-protected:
-    //RTTI is simpler in C++ if you use this approach
-    //indicates a chess figure for which the behavior is being declared
-    ChessPieceBehaviorTypes currentBehaviorType;
-    //may be unused
-    ChessPieceSideTypes currentSideType;
-    std::vector<ChessPiecePattern> currentMovementPattern;
-    std::vector<ChessPiecePattern> currentAttackPattern;
-public:
-    ChessPieceMetadataBehavior();
-    ChessPieceBehaviorTypes getCurrentBehaviorType() const;
-    void setCurrentBehaviorType(const ChessPieceBehaviorTypes &value);
-    ChessPieceSideTypes getCurrentSideType() const;
-    void setCurrentSideType(const ChessPieceSideTypes &value);
-    //declaring movement and attack patterns may be moved to constructor, and subclasses actually fill up these vectors in constructor
-    //virtual void declareCurrentMovementPattern();
-
-};
 
 /**
  * @brief The ChessPiecePattern class declares how the chess piece moves and how it may attack
@@ -75,6 +53,31 @@ public:
     ChessIntegerCoordType getXPoint() const;
     ChessIntegerCoordType getYPoint() const;
 };
+
+/**
+ * @brief The ChessPieceMetadataBehavior base class declares how a figurine moves and attacks
+ */
+class ChessPieceMetadataBehavior {
+protected:
+    //RTTI is simpler in C++ if you use this approach
+    //indicates a chess figure for which the behavior is being declared
+    ChessPieceBehaviorTypes currentBehaviorType;
+    //may be unused
+    ChessPieceSideTypes currentSideType;
+    std::vector<ChessPiecePattern> currentMovementPattern;
+    std::vector<ChessPiecePattern> currentAttackPattern;
+public:
+    ChessPieceMetadataBehavior();
+    ChessPieceBehaviorTypes getCurrentBehaviorType() const;
+    void setCurrentBehaviorType(const ChessPieceBehaviorTypes &value);
+    ChessPieceSideTypes getCurrentSideType() const;
+    void setCurrentSideType(const ChessPieceSideTypes &value);
+    //declaring movement and attack patterns may be moved to constructor, and subclasses actually fill up these vectors in constructor
+    //virtual void declareCurrentMovementPattern();
+
+};
+
+
 //seems like this is going to be unused
 class ChessPieceMetadataDisplay {
 protected:
@@ -91,10 +94,8 @@ public:
 
 };
 
-std::shared_ptr<KingBehavior> instKingBehavior;
+extern std::shared_ptr<KingBehavior> instKingBehavior;
 
-void initBehaviors() {
-     instKingBehavior = new KingBehavior();
-}
+void initBehaviors();
 
 #endif // CHESSPIECEMETADATA_H

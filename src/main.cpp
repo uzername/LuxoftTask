@@ -9,7 +9,10 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     
     //Logic logic;
-    ChessFieldPieces gamefieldCurrentState = ChessFieldPieces(8);
+
+    ChessFieldPieces gamefieldCurrentState;
+      gamefieldCurrentState.setInternalBoardSize(8);
+    fillGameField(&gamefieldCurrentState);
 
     QQmlApplicationEngine engine;
     //engine.rootContext()->setContextProperty("logic", &logic);
@@ -19,5 +22,10 @@ int main(int argc, char *argv[])
     return app.exec();
 }
 void fillGameField(ChessFieldPieces *instGameField) {
-    //instGameField->appendPieceOnField();
+    initBehaviors();
+    ChessPieceOnField whiteKing = ChessPieceOnField(instKingBehavior, "/images/white_king.svg");
+    whiteKing.setCurrentXonField(1);
+    whiteKing.setCurrentYonField(2);
+    instGameField->appendPieceOnField(whiteKing);
+
 }

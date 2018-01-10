@@ -14,7 +14,27 @@ enum Roles {
     RolePositionY,
 };
 
+/**
+ * @brief The ChessPieceOnField class represents a single item on field. Independent from QT, may be worth moving to separate file
+ */
+class ChessPieceOnField {
+protected:
+    std::shared_ptr<ChessPieceMetadataBehavior> instBehaviorChessPiece;
+    //std::shared_ptr<ChessPieceMetadataDisplay> instDisplayChessPiece;
+    std::string pathToImage;
+    ChessIntegerCoordType currentXonField;
+    ChessIntegerCoordType currentYonField;
+public:
+    ChessPieceOnField(std::shared_ptr<ChessPieceMetadataBehavior> in_Behavior, std::string in_pathToImage);
+    std::string getPathToImage() const;
+    void setPathToImage(const std::string &value);
+    ChessIntegerCoordType getCurrentXonField() const;
+    void setCurrentXonField(const ChessIntegerCoordType &value);
+    ChessIntegerCoordType getCurrentYonField() const;
+    void setCurrentYonField(const ChessIntegerCoordType &value);
+
 };
+
 class ChessFieldPieces : public QAbstractListModel
 {
     Q_OBJECT
@@ -22,7 +42,8 @@ public:
     // http://doc.qt.io/qt-5/properties.html
     Q_PROPERTY(ChessIntegerCoordType boardSize READ boardSize WRITE setInternalBoardSize NOTIFY boardSizeChanged);
     Q_PROPERTY(std::string boardPathToImageBackground READ getBoardPathToImage WRITE setBoardPathToImage NOTIFY boardImageChanged);
-    ChessFieldPieces(ChessIntegerCoordType in_boardSize, QObject *parent);
+    explicit ChessFieldPieces(ChessIntegerCoordType in_boardSize, QObject *parent = 0);
+    explicit ChessFieldPieces(QObject *parent = 0);
     /**
      * @brief boardSize
      * @return the size of game board
@@ -50,24 +71,5 @@ signals:
     void boardSizeChanged(ChessIntegerCoordType);
     void boardImageChanged(std::string);
 };
-/**
- * @brief The ChessPieceOnField class represents a single item on field. Independent from QT
- */
-class ChessPieceOnField {
-protected:
-    std::shared_ptr<ChessPieceMetadataBehavior> instBehaviorChessPiece;
-    //std::shared_ptr<ChessPieceMetadataDisplay> instDisplayChessPiece;
-    std::string pathToImage;
-    ChessIntegerCoordType currentXonField;
-    ChessIntegerCoordType currentYonField;
-public:
-    ChessPieceOnField(std::shared_ptr<ChessPieceMetadataBehavior> in_Behavior, std::string in_pathToImage);
-    std::string getPathToImage() const;
-    void setPathToImage(const std::string &value);
-    ChessIntegerCoordType getCurrentXonField() const;
-    void setCurrentXonField(const ChessIntegerCoordType &value);
-    ChessIntegerCoordType getCurrentYonField() const;
-    void setCurrentYonField(const ChessIntegerCoordType &value);
 
-}
 #endif // CHESSFIELDPIECES_H

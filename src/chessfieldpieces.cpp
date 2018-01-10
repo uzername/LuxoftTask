@@ -1,15 +1,15 @@
 #include "chessfieldpieces.h"
 
-ChessFieldPieces::ChessFieldPieces()
-{
-
-}
-
-ChessFieldPieces::ChessFieldPieces(ChessIntegerCoordType in_boardSize, QObject *parent = 0)
+ChessFieldPieces::ChessFieldPieces(ChessIntegerCoordType in_boardSize, QObject *parent)
          : QAbstractListModel(parent)
 {
     this->allChessPiecesDisplayed = std::vector<ChessPieceOnField>();
     this->internalBoardSize = in_boardSize;
+}
+
+ChessFieldPieces::ChessFieldPieces(QObject *parent) : QAbstractListModel(parent)
+{
+
 }
 
 ChessIntegerCoordType ChessFieldPieces::boardSize()
@@ -27,6 +27,7 @@ QHash<int, QByteArray> ChessFieldPieces::roleNames() const {
     names.insert(RoleImagePath, "display");
     names.insert(RolePositionX, "PositionX");
     names.insert(RolePositionY, "PositionY");
+    return names;
 }
 
 QVariant ChessFieldPieces::data(const QModelIndex &index, int role) const
@@ -35,10 +36,10 @@ QVariant ChessFieldPieces::data(const QModelIndex &index, int role) const
       return QVariant();
     }
     int indexNum = static_cast<int>(index.row());
-    ChessPieceOnField &currentPiece = this->allChessPiecesDisplayed[indexNum];
+    ChessPieceOnField currentPiece = this->allChessPiecesDisplayed[indexNum];
     switch (role) {
         case (RoleImagePath): {
-            return currentPiece.getPathToImage();
+            return QString::fromStdString(currentPiece.getPathToImage());
             break;
         }
         case (RolePositionX): {
@@ -92,6 +93,12 @@ ChessIntegerCoordType ChessPieceOnField::getCurrentYonField() const
 void ChessPieceOnField::setCurrentYonField(const ChessIntegerCoordType &value)
 {
     currentYonField = value;
+}
+
+ChessPieceOnField::ChessPieceOnField(std::shared_ptr<ChessPieceMetadataBehavior> in_Behavior, std::__cxx11::string in_pathToImage)
+{
+    this->pathToImage = in_pathToImage;
+    this->instBehaviorChessPiece = in_Behavior;
 }
 
 std::string ChessPieceOnField::getPathToImage() const
