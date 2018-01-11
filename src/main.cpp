@@ -22,11 +22,15 @@ int main(int argc, char *argv[])
       gamefieldCurrentState.setBoardPathToImage("/images/chess_board.jpg");
     fillGameField(&gamefieldCurrentState);
 
-
+    ChessPieceMovementHandler gamefieldMovementHandler = ChessPieceMovementHandler(QString("/images/movement.svg"), QString("/images/attack.svg"));
+      std::shared_ptr<ChessPieceMovementHandler> gamefieldMovementHandlerPtr = std::shared_ptr<ChessPieceMovementHandler>(&gamefieldMovementHandler);
+      gamefieldCurrentState.signMovementAndAttackHandlingPact(gamefieldMovementHandlerPtr);
 
     QQmlApplicationEngine engine;
     //engine.rootContext()->setContextProperty("logic", &logic);
     engine.rootContext()->setContextProperty("mylogic", &gamefieldCurrentState);
+    engine.rootContext()->setContextProperty("mvatklogic", &gamefieldMovementHandler);
+
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
     return app.exec();
