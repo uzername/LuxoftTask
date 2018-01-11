@@ -3,16 +3,11 @@
 
 #include <QAbstractListModel>
 #include "chesspiecemetadata.h"
+#include "chesspiecemovementhandler.h"
+
 #include <memory>
-/**
- * @brief The ChessFieldPieces class reflects upon the gamefield and lies close to display.
- * This is a model. It is used to contain all the gamefield figures. Depends on QT items
- */
-enum Roles {
-    RoleImagePath = Qt::DisplayRole,
-    RolePositionX,
-    RolePositionY,
-};
+
+#include "mymodelroles.h"
 
 /**
  * @brief The ChessPieceOnField class represents a single item on field. Independent from QT, may be worth moving to separate file
@@ -34,25 +29,35 @@ public:
     void setCurrentYonField(const ChessIntegerCoordType &value);
 
 };
-
+/**
+ * @brief The ChessFieldPieces class reflects upon the gamefield and lies close to display.
+ * This is a model. It is used to contain all the gamefield figures. Depends on QT items
+ */
 class ChessFieldPieces : public QAbstractListModel
 {
     Q_OBJECT
 public:
     // http://doc.qt.io/qt-5/properties.html
-    Q_PROPERTY(ChessIntegerCoordType boardSize READ boardSize WRITE setInternalBoardSize NOTIFY boardSizeChanged);
-    Q_PROPERTY(std::string boardPathToImageBackground READ getBoardPathToImage WRITE setBoardPathToImage NOTIFY boardImageChanged);
+    Q_PROPERTY(/*ChessIntegerCoordType*/int boardSize READ boardSize WRITE setInternalBoardSize NOTIFY boardSizeChanged);
+    // I am afraid you can't use std::string directly within QML, you have to convert to QString first.
+    // https://stackoverflow.com/questions/17216627/using-stdstring-in-qml
+    Q_PROPERTY(QString boardPathToImageBackground READ getBoardPathToImage WRITE setBoardPathToImage NOTIFY boardImageChanged);
     explicit ChessFieldPieces(ChessIntegerCoordType in_boardSize, QObject *parent = 0);
     explicit ChessFieldPieces(QObject *parent = 0);
     /**
-     * @brief boardSize
+     * @brief boardSize. should be int to avoid errors and crashes caused by Q_PROPERTY
      * @return the size of game board
      */
-    ChessIntegerCoordType boardSize();
-    void setInternalBoardSize(const ChessIntegerCoordType &value);
+    /*ChessIntegerCoordType*/int boardSize();
+    void setInternalBoardSize(const /*ChessIntegerCoordType*/int &value);
     void appendPieceOnField(ChessPieceOnField pieceToAppend);
-    std::string getBoardPathToImage() const;
-    void setBoardPathToImage(const std::string &value);
+    QString getBoardPathToImage() const;
+    void setBoardPathToImage(const QString &value);
+    /**
+     * @brief signMovementAndAttackHandlingPact
+     * @param in_chessPieceMovementHandler points to an instance where finalized info about allowed movement positions should be passed
+     */
+    void signMovementAndAttackHandlingPact(std::shared_ptr<ChessPieceMovementHandler> in_chessPieceMovementHandler);
 
 protected:
     //see "Model/View Programming" and "QAbstractListModel class"
@@ -65,8 +70,9 @@ protected:
 
 private:
     ChessIntegerCoordType internalBoardSize;
-    std::string boardPathToImage;
+    QString boardPathToImage;
     std::vector<ChessPieceOnField> allChessPiecesDisplayed;
+    std::shared_ptr<ChessPieceMovementHandler> movementInfoModel;
 signals:
     void boardSizeChanged(ChessIntegerCoordType);
     void boardImageChanged(std::string);

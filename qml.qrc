@@ -14,5 +14,7 @@
         <file>images/white_knight.svg</file>
         <file>images/white_queen.svg</file>
         <file>images/white_rook.svg</file>
+        <file>images/attack.svg</file>
+        <file>images/movement.svg</file>
     </qresource>
 </RCC>

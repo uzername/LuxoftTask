@@ -12,12 +12,12 @@ ChessFieldPieces::ChessFieldPieces(QObject *parent) : QAbstractListModel(parent)
 
 }
 
-ChessIntegerCoordType ChessFieldPieces::boardSize()
+/*ChessIntegerCoordType*/int ChessFieldPieces::boardSize()
 {
     return this->internalBoardSize;
 }
 
-void ChessFieldPieces::setInternalBoardSize(const ChessIntegerCoordType &value)
+void ChessFieldPieces::setInternalBoardSize(const int &value)
 {
     internalBoardSize = value;
 }
@@ -62,14 +62,19 @@ int ChessFieldPieces::rowCount(const QModelIndex &parent) const {
     return this->allChessPiecesDisplayed.size();
 }
 
-std::string ChessFieldPieces::getBoardPathToImage() const
+QString ChessFieldPieces::getBoardPathToImage() const
 {
     return boardPathToImage;
 }
 
-void ChessFieldPieces::setBoardPathToImage(const std::string &value)
+void ChessFieldPieces::setBoardPathToImage(const QString &value)
 {
     boardPathToImage = value;
+}
+
+void ChessFieldPieces::signMovementAndAttackHandlingPact(std::shared_ptr<ChessPieceMovementHandler> in_chessPieceMovementHandler) {
+    this->movementInfoModel = in_chessPieceMovementHandler;
+
 }
 void ChessFieldPieces::appendPieceOnField(ChessPieceOnField pieceToAppend) {
     this->allChessPiecesDisplayed.push_back(pieceToAppend);

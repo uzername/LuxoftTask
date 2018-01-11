@@ -54,8 +54,8 @@ ApplicationWindow {
       id: gameBoard
       x: 0
       y: 0
-      width : squareSize*8 //logic.boardSize
-      height: squareSize*8 //logic.boardSize
+      width : squareSize*mylogic.boardSize
+      height: squareSize*mylogic.boardSize
       
       Image {
         id: chessBoardImg
@@ -71,17 +71,16 @@ ApplicationWindow {
       Repeater {
          //sort of qlistmodel
         model: mylogic
-/*
+
         Image { //a chess piece on gamefield
           height: squareSize
           width : squareSize
-           //taken from model
-         // x: squareSize * positionX
-         // y: squareSize * positionY
-          x: squareSize
-          y: squareSize
+           //PositionX, PositionY, display are taken from model (check out Role Names).
+           //Only the most basic types are allowed for usage by model due to "QMetaProperty::read: Unable to handle unregistered datatype" error
+          x: squareSize*PositionX
+          y: squareSize*PositionY
 
-          //source: images[type].imgPath
+          source: display /*images[type].imgPath*/
           //create mouseArea to handle mouse events
           MouseArea {
             anchors.fill: parent
@@ -108,7 +107,7 @@ ApplicationWindow {
             }
           }
         }
-        */
+
       }
     }
     Column {
