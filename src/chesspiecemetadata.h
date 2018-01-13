@@ -43,16 +43,21 @@ public:
     //direction is set in constructor
     ChessPiecePatternVectorTypes getTheDirectionType() const;
 };
-
+/**
+ * @brief The ChessPiecePointPattern class represents that a figurine moves or attacks to a position defined by point, relative to current location of this figurine
+ */
 class ChessPiecePointPattern: public ChessPiecePattern {
 protected:
-    ChessIntegerCoordType XPoint;
-    ChessIntegerCoordType YPoint;
+    /*
+    int XPoint;
+    int YPoint;
+    */
 public:
-    ChessPiecePointPattern(ChessIntegerCoordType in_XPoint, ChessIntegerCoordType in_YPoint);
-
-    ChessIntegerCoordType getXPoint() const;
-    ChessIntegerCoordType getYPoint() const;
+    ChessPiecePointPattern(int in_XPoint, int in_YPoint);
+    int XPoint;
+    int YPoint;
+    int getXPoint() const;
+    int getYPoint() const;
 };
 
 /**
@@ -65,8 +70,15 @@ protected:
     ChessPieceBehaviorTypes currentBehaviorType;
     //may be unused
     ChessPieceSideTypes currentSideType;
+    //polymorphism games are bad for memory
+    /*
     std::vector<ChessPiecePattern> currentMovementPattern;
     std::vector<ChessPiecePattern> currentAttackPattern;
+    */
+    std::vector<ChessPiecePointPattern> currentPointMovementPattern;
+    std::vector<ChessPieceVectorPattern> currentVectorMovementPattern;
+    std::vector<ChessPiecePointPattern> currentPointAttackPattern;
+    std::vector<ChessPieceVectorPattern> currentVectorAttackPattern;
 public:
     ChessPieceMetadataBehavior();
     ChessPieceBehaviorTypes getCurrentBehaviorType() const;
@@ -75,7 +87,16 @@ public:
     void setCurrentSideType(const ChessPieceSideTypes &value);
     //declaring movement and attack patterns may be moved to constructor, and subclasses actually fill up these vectors in constructor
     //virtual void declareCurrentMovementPattern();
-
+    std::vector<ChessPiecePointPattern>::iterator getMovementPatternArrayIterator();
+    std::vector<ChessPiecePointPattern>::iterator getMovementPatternArrayIteratorEnd();
+    std::vector<ChessPiecePointPattern>::iterator getAttackPatternArrayIterator();
+    std::vector<ChessPiecePointPattern>::iterator getAttackPatternArrayIteratorEnd();
+    /**
+     * @brief performActionsAfterMovement - what actions (in code) should be performed after movement has been done.
+     * it may be declared as a function ptr callback, but it's not worth it.
+     */
+    virtual void performActionsAfterMovement(void* ud);
+    virtual void performActionsBeforeMovement(void* ud);
 };
 
 
@@ -87,16 +108,23 @@ protected:
 
 //a single place to define and keep behavior types of all possible chess pieces
 //there are way too many exceptions from movement rules, so it may be better to declare each behavior type as separate class
-
 class KingBehavior: public ChessPieceMetadataBehavior {
-
 public:
     KingBehavior();
-
+    void performActionsAfterMovement(void *ud) {    };
+    void performActionsBeforeMovement(void *ud) {   };
 };
+class BlackPawnBehavior: public ChessPieceMetadataBehavior {
+public:
 
-extern std::shared_ptr<KingBehavior> instKingBehavior;
+    BlackPawnBehavior();
+    void performActionsAfterMovement(void *ud);
+    void performActionsBeforeMovement(void *ud);
+};
+//these instances are shared across all chess pieces!
+extern KingBehavior* instKingBehavior;
+extern BlackPawnBehavior* instBlackPawnBehavior;
 
 void initBehaviors();
-
+void deinitBehaviors();
 #endif // CHESSPIECEMETADATA_H

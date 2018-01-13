@@ -11,6 +11,8 @@ void ChessPieceMovementHandler::setPathToAttackImage(const QString &value)
     pathToAttackImage = value;
 }
 
+//ChessPieceMovementHandler::~ChessPieceMovementHandler() { }
+
 QHash<int, QByteArray> ChessPieceMovementHandler::roleNames() const
 {
     QHash<int, QByteArray> names;
@@ -58,10 +60,29 @@ int ChessPieceMovementHandler::rowCount(const QModelIndex &parent) const
     return this->allMvAtkStructures.size();
 }
 
+void ChessPieceMovementHandler::setAllMvAtkStructures(const std::vector<displayMovementStructure> &value)
+{
+    beginResetModel();
+    allMvAtkStructures = value;
+    endResetModel();
+}
+
+void ChessPieceMovementHandler::clearModelData()
+{
+    beginResetModel();
+    allMvAtkStructures.clear();
+    endResetModel();
+}
+
 ChessPieceMovementHandler::ChessPieceMovementHandler(QString in_pathToMovementImage, QString in_pathToAttackImage, QObject *parent): QAbstractListModel(parent) {
-    this->allMvAtkStructures = new std::vector<displayMovementStructure>();
+    this->allMvAtkStructures = std::vector<displayMovementStructure>();
     this->pathToMovementImage = in_pathToMovementImage;
     this->pathToAttackImage = in_pathToAttackImage;
+}
+
+ChessPieceMovementHandler::ChessPieceMovementHandler(QObject *parent): QAbstractListModel(parent)
+{
+
 }
 
 QString ChessPieceMovementHandler::getPathToMovementImage() const

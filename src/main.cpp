@@ -5,6 +5,8 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 void fillGameField(ChessFieldPieces *instGameField);
+void globalCleanup();
+ChessPieceMovementHandler* gamefieldMovementHandlerPtr;
 /**
  * @brief main. The following app is used to show some chess interface functionality.
  * @param argc
@@ -22,9 +24,14 @@ int main(int argc, char *argv[])
       gamefieldCurrentState.setBoardPathToImage("/images/chess_board.jpg");
     fillGameField(&gamefieldCurrentState);
 
-    ChessPieceMovementHandler gamefieldMovementHandler = ChessPieceMovementHandler(QString("/images/movement.svg"), QString("/images/attack.svg"));
-      std::shared_ptr<ChessPieceMovementHandler> gamefieldMovementHandlerPtr = std::shared_ptr<ChessPieceMovementHandler>(&gamefieldMovementHandler);
-      gamefieldCurrentState.signMovementAndAttackHandlingPact(gamefieldMovementHandlerPtr);
+    ChessPieceMovementHandler gamefieldMovementHandler(QString("/images/movement.svg"), QString("/images/attack.svg"));
+    /*
+    ChessPieceMovementHandler gamefieldMovementHandler;
+    gamefieldMovementHandler.setPathToAttackImage(QString("/images/attack.svg"));
+    gamefieldMovementHandler.setPathToAttackImage(QString("/images/movement.svg"));
+    */
+    //  gamefieldMovementHandlerPtr = (&gamefieldMovementHandler);
+    gamefieldCurrentState.signMovementAndAttackHandlingPact(&gamefieldMovementHandler);
 
     QQmlApplicationEngine engine;
     //engine.rootContext()->setContextProperty("logic", &logic);
@@ -33,7 +40,10 @@ int main(int argc, char *argv[])
 
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
-    return app.exec();
+    int exitcode = app.exec();
+    //globalCleanup();
+    deinitBehaviors();
+    return exitcode;
 }
 void fillGameField(ChessFieldPieces *instGameField) {
     initBehaviors();
@@ -41,4 +51,14 @@ void fillGameField(ChessFieldPieces *instGameField) {
     whiteKing.setCurrentXonField(1); whiteKing.setCurrentYonField(2);
     instGameField->appendPieceOnField(whiteKing);
 
+    ChessPieceOnField blackPawn = ChessPieceOnField(instBlackPawnBehavior, "/images/black_pawn.svg");
+    blackPawn.setCurrentXonField(2); blackPawn.setCurrentYonField(2);
+    instGameField->appendPieceOnField(blackPawn);
 }
+
+void globalCleanup() {
+    if (gamefieldMovementHandlerPtr != Q_NULLPTR) {
+        delete gamefieldMovementHandlerPtr;
+    }
+}
+

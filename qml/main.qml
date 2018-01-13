@@ -67,7 +67,18 @@ ApplicationWindow {
       // http://doc.qt.io/qt-5/qml-qtquick-repeater.html
       //this approach is unnatural. A better way: http://doc.qt.io/qt-5/qtqml-cppintegration-overview.html
       //well, that kind of model and repeater may actually work.
+      Repeater {//display available movement and attack possibilities
+          model: mvatklogic
+          Image {
+               height: squareSize
+               width: squareSize
+               //taken from RoleNames of model
+               source: mvatk_display
+               x: squareSize*mvatk_PositionX
+               y: squareSize*mvatk_PositionY
+          }
 
+      }
       Repeater {
          //sort of qlistmodel
         model: mylogic
@@ -92,6 +103,10 @@ ApplicationWindow {
             onPressed: {
               startX = parent.x;
               startY = parent.y;
+                var preparedX = startX / squareSize;
+                var preparedY = startY / squareSize;
+                mylogic.activateDisplayAvailableMoves(preparedX, preparedY);
+
             }
 
             onReleased: {
@@ -99,7 +114,7 @@ ApplicationWindow {
               var fromY = startY / squareSize;
               var toX   = (parent.x + mouseX) / squareSize;
               var toY   = (parent.y + mouseY) / squareSize;
-
+              mylogic.activateClearModelData();
               //if (!logic.move(fromX, fromY, toX, toY)) {
                 parent.x = startX;
                 parent.y = startY;
@@ -109,6 +124,7 @@ ApplicationWindow {
         }
 
       }
+
     }
     Column {
         anchors.left: gameBoard.right
@@ -156,7 +172,7 @@ ApplicationWindow {
        anchors.left: parent.left
 
        onClicked: {
-          if ((screenSwitchingGnome.state == "screen1")||(screenSwitchingGnome.state == "screen3")) {
+          if ((screenSwitchingGnome.state == "")||(screenSwitchingGnome.state == "screen1")||(screenSwitchingGnome.state == "screen3")) {
               screenSwitchingGnome.state = "screen3"
           }
        }

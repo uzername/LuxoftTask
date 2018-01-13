@@ -14,13 +14,16 @@
  */
 class ChessPieceOnField {
 protected:
-    std::shared_ptr<ChessPieceMetadataBehavior> instBehaviorChessPiece;
+    ChessPieceMetadataBehavior* instBehaviorChessPiece;
     //std::shared_ptr<ChessPieceMetadataDisplay> instDisplayChessPiece;
     std::string pathToImage;
     ChessIntegerCoordType currentXonField;
     ChessIntegerCoordType currentYonField;
+
+    uint8_t movementPerformed;
+
 public:
-    ChessPieceOnField(std::shared_ptr<ChessPieceMetadataBehavior> in_Behavior, std::string in_pathToImage);
+    ChessPieceOnField(ChessPieceMetadataBehavior* in_Behavior, std::string in_pathToImage);
     std::string getPathToImage() const;
     void setPathToImage(const std::string &value);
     ChessIntegerCoordType getCurrentXonField() const;
@@ -28,6 +31,9 @@ public:
     ChessIntegerCoordType getCurrentYonField() const;
     void setCurrentYonField(const ChessIntegerCoordType &value);
 
+    ChessPieceMetadataBehavior *getInstBehaviorChessPiece() const;
+    void setMovementPerformed(const uint8_t &value);
+    uint8_t* getMovementPerformed();
 };
 /**
  * @brief The ChessFieldPieces class reflects upon the gamefield and lies close to display.
@@ -57,8 +63,25 @@ public:
      * @brief signMovementAndAttackHandlingPact
      * @param in_chessPieceMovementHandler points to an instance where finalized info about allowed movement positions should be passed
      */
-    void signMovementAndAttackHandlingPact(std::shared_ptr<ChessPieceMovementHandler> in_chessPieceMovementHandler);
-
+    void signMovementAndAttackHandlingPact(ChessPieceMovementHandler *in_chessPieceMovementHandler);
+    // add Q_INVOKABLE to display items on the field http://doc.qt.io/qt-5/qtqml-cppintegration-exposecppattributes.html
+    /**
+     * @brief activateDisplayAvailableMoves fills up the array of ChessPieceMovementHandler* movementInfoModel previously set by signMovementAndAttackHandlingPact
+     * @param in_X coordinate of chess piece
+     * @param in_Y coordinate of chess piece
+     */
+    Q_INVOKABLE void activateDisplayAvailableMoves (int in_X, int in_Y);
+    /**
+     * @brief findByPosition
+     * @param in_X
+     * @param in_Y
+     * @return pointer to chess figurine on this chess cell.
+     */
+    ChessPieceOnField* findByPosition(int in_X, int in_Y);
+    /**
+      * @brief this routine may be called from child model, but let's keep all hte cals here
+      */
+    Q_INVOKABLE void activateClearModelData();
 protected:
     //see "Model/View Programming" and "QAbstractListModel class"
     // When subclassing QAbstractListModel, you must provide implementations of the rowCount() and data() functions.
@@ -72,7 +95,7 @@ private:
     ChessIntegerCoordType internalBoardSize;
     QString boardPathToImage;
     std::vector<ChessPieceOnField> allChessPiecesDisplayed;
-    std::shared_ptr<ChessPieceMovementHandler> movementInfoModel;
+    ChessPieceMovementHandler* movementInfoModel;
 signals:
     void boardSizeChanged(ChessIntegerCoordType);
     void boardImageChanged(std::string);
