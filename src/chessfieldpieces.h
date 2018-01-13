@@ -82,6 +82,7 @@ public:
       * @brief this routine may be called from child model, but let's keep all hte cals here
       */
     Q_INVOKABLE void activateClearModelData();
+    Q_INVOKABLE uint8_t move(int fromX, int fromY, int toX, int toY);
 protected:
     //see "Model/View Programming" and "QAbstractListModel class"
     // When subclassing QAbstractListModel, you must provide implementations of the rowCount() and data() functions.

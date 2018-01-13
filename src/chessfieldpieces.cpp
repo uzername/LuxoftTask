@@ -122,6 +122,11 @@ void ChessFieldPieces::activateClearModelData() {
     }
     this->movementInfoModel->clearModelData();
 }
+
+uint8_t ChessFieldPieces::move(int fromX, int fromY, int toX, int toY)
+{
+
+}
 void ChessFieldPieces::appendPieceOnField(ChessPieceOnField pieceToAppend) {
     this->allChessPiecesDisplayed.push_back(pieceToAppend);
 }
