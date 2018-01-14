@@ -22,6 +22,7 @@ protected:
 
     uint8_t movementPerformed;
 
+    ChessPieceSideTypes currentSideType;
 public:
     ChessPieceOnField(ChessPieceMetadataBehavior* in_Behavior, std::string in_pathToImage);
     std::string getPathToImage() const;
@@ -34,6 +35,8 @@ public:
     ChessPieceMetadataBehavior *getInstBehaviorChessPiece() const;
     void setMovementPerformed(const uint8_t &value);
     uint8_t* getMovementPerformed();
+    ChessPieceSideTypes getCurrentSideType() const;
+    void setCurrentSideType(const ChessPieceSideTypes &value);
 };
 /**
  * @brief The ChessFieldPieces class reflects upon the gamefield and lies close to display.
@@ -78,11 +81,20 @@ public:
      * @return pointer to chess figurine on this chess cell.
      */
     ChessPieceOnField* findByPosition(int in_X, int in_Y);
+    ChessPieceOnField* findByPosition(int in_X, int in_Y, unsigned int *inout_indexptr);
     /**
-      * @brief this routine may be called from child model, but let's keep all hte cals here
+      * @brief Clears available moves. this routine may be called from child model, but let's keep all the calls here
       */
     Q_INVOKABLE void activateClearModelData();
-    Q_INVOKABLE uint8_t move(int fromX, int fromY, int toX, int toY);
+    /**
+      * @brief Performs movement of chess piece on board. All data here are absolute integer coordinates of cells
+      * It is possible to use data in movementInfoModel, which have been filled in activateDisplayAvailableMoves
+      * Changes data in model, if acceptable
+      * @returns 0 if movement inavailable; 1 if movement may be performed; 2 if error happened
+      */
+    Q_INVOKABLE int move(int fromX, int fromY, int toX, int toY);
+    Q_INVOKABLE void fillGameField();
+    Q_INVOKABLE void clearGameField();
 protected:
     //see "Model/View Programming" and "QAbstractListModel class"
     // When subclassing QAbstractListModel, you must provide implementations of the rowCount() and data() functions.

@@ -16,7 +16,7 @@ public:
 };
 /**
  * @brief The ChessPieceMovementHandler class is a model used to display available moves of selected chess piece. depends on QT utils
- * All evaluations are being performed by higher-grade ChessFieldPieces model, and this one receives only data to display
+ * All evaluations are being performed by higher-grade ChessFieldPieces model, and this one receives only data to display. ChessFieldPieces model calls methods of this class
  */
 class ChessPieceMovementHandler : public QAbstractListModel
         //it is hard to avoid 'use of deleted function'. To do this add Q_OBJECT, explicit to ctor def and define standard overloaded ctor (2 variants?)
@@ -45,8 +45,10 @@ public:
     // http://www.prog.org.ru/topic_15059_0.html (rerun qmake; 7 troubles - one clean build)
     //~ChessPieceMovementHandler();
 
-
+    void removeItemByIndex(unsigned int in_index);
     void setAllMvAtkStructures(const std::vector<displayMovementStructure> &value);
+    std::vector<displayMovementStructure>::iterator getMvAtkStructuresIteratorBegin();
+    std::vector<displayMovementStructure>::iterator getMvAtkStructuresIteratorEnd();
     void clearModelData();
 signals:
     void movementImageChanged(QString);

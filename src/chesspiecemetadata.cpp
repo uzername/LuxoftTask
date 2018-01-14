@@ -9,16 +9,6 @@ void ChessPieceMetadataBehavior::setCurrentBehaviorType(const ChessPieceBehavior
     currentBehaviorType = value;
 }
 
-ChessPieceSideTypes ChessPieceMetadataBehavior::getCurrentSideType() const
-{
-    return currentSideType;
-}
-
-void ChessPieceMetadataBehavior::setCurrentSideType(const ChessPieceSideTypes &value)
-{
-    currentSideType = value;
-}
-
 std::vector<ChessPiecePointPattern>::iterator ChessPieceMetadataBehavior::getMovementPatternArrayIterator() {
     return this->currentPointMovementPattern.begin();
 }
@@ -131,18 +121,29 @@ void BlackPawnBehavior::performActionsBeforeMovement(void *ud)
 }
 
 //========
+/*
 KingBehavior* instKingBehavior;
 BlackPawnBehavior* instBlackPawnBehavior;
+*/
+std::unordered_map<int, ChessPieceMetadataBehavior*> globalBehaviorCollection;
 void initBehaviors() {
-    //KingBehavior KingBehaviorInstance = KingBehavior();
-     //instKingBehavior = std::shared_ptr<KingBehavior>(&KingBehaviorInstance);
+    /*
     instKingBehavior = new KingBehavior();
     instBlackPawnBehavior = new BlackPawnBehavior();
+    */
+    globalBehaviorCollection = std::unordered_map<int, ChessPieceMetadataBehavior*>();
+    globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(KING_TYPE, new KingBehavior()) );
+    globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(BLACK_PAWN_TYPE, new BlackPawnBehavior()) );
 }
 
 void deinitBehaviors() {
+    /*
     delete instKingBehavior;
     delete instBlackPawnBehavior;
+    */
+    for (std::unordered_map<int,ChessPieceMetadataBehavior*>::iterator it2=globalBehaviorCollection.begin(); it2!=globalBehaviorCollection.end(); it2++) {
+        delete (*it2).second;
+    }
 }
 //=======
 

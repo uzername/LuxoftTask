@@ -11,6 +11,12 @@ void ChessPieceMovementHandler::setPathToAttackImage(const QString &value)
     pathToAttackImage = value;
 }
 
+void ChessPieceMovementHandler::removeItemByIndex(unsigned int in_index) {
+    // https://stackoverflow.com/questions/875103/how-do-i-erase-an-element-from-stdvector-by-index
+    if (in_index>=this->allMvAtkStructures.size()) { return; }
+    this->allMvAtkStructures.erase(this->allMvAtkStructures.begin()+in_index);
+}
+
 //ChessPieceMovementHandler::~ChessPieceMovementHandler() { }
 
 QHash<int, QByteArray> ChessPieceMovementHandler::roleNames() const
@@ -65,6 +71,14 @@ void ChessPieceMovementHandler::setAllMvAtkStructures(const std::vector<displayM
     beginResetModel();
     allMvAtkStructures = value;
     endResetModel();
+}
+
+std::vector<displayMovementStructure>::iterator ChessPieceMovementHandler::getMvAtkStructuresIteratorBegin() {
+    return this->allMvAtkStructures.begin();
+}
+
+std::vector<displayMovementStructure>::iterator ChessPieceMovementHandler::getMvAtkStructuresIteratorEnd() {
+    return this->allMvAtkStructures.end();
 }
 
 void ChessPieceMovementHandler::clearModelData()

@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <unordered_map>
 //use this type to represent coords
 typedef uint8_t ChessIntegerCoordType;
 typedef enum ChessPieceBehaviorTypes {
@@ -68,8 +69,8 @@ protected:
     //RTTI is simpler in C++ if you use this approach
     //indicates a chess figure for which the behavior is being declared
     ChessPieceBehaviorTypes currentBehaviorType;
-    //may be unused
-    ChessPieceSideTypes currentSideType;
+    //a side type relates to a item on field rather than generic behavior!
+        //ChessPieceSideTypes currentSideType;
     //polymorphism games are bad for memory
     /*
     std::vector<ChessPiecePattern> currentMovementPattern;
@@ -83,8 +84,6 @@ public:
     ChessPieceMetadataBehavior();
     ChessPieceBehaviorTypes getCurrentBehaviorType() const;
     void setCurrentBehaviorType(const ChessPieceBehaviorTypes &value);
-    ChessPieceSideTypes getCurrentSideType() const;
-    void setCurrentSideType(const ChessPieceSideTypes &value);
     //declaring movement and attack patterns may be moved to constructor, and subclasses actually fill up these vectors in constructor
     //virtual void declareCurrentMovementPattern();
     std::vector<ChessPiecePointPattern>::iterator getMovementPatternArrayIterator();
@@ -97,6 +96,7 @@ public:
      */
     virtual void performActionsAfterMovement(void* ud);
     virtual void performActionsBeforeMovement(void* ud);
+    virtual ~ChessPieceMetadataBehavior() { };
 };
 
 
@@ -122,9 +122,16 @@ public:
     void performActionsBeforeMovement(void *ud);
 };
 //these instances are shared across all chess pieces!
+/*
 extern KingBehavior* instKingBehavior;
 extern BlackPawnBehavior* instBlackPawnBehavior;
-
+*/
+/**
+ * @brief globalBehaviorCollection - std::unordered_map requires a hash functor in order to do anything. By default, that hash functor
+ * is std::hash<Key> - but the standard only provides specializations for the integral types and pointers. A cast from enum to int required.
+ * enum type cannot be a type key by default
+ */
+extern std::unordered_map<int, ChessPieceMetadataBehavior*> globalBehaviorCollection;
 void initBehaviors();
 void deinitBehaviors();
 #endif // CHESSPIECEMETADATA_H

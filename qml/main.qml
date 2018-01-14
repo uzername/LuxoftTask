@@ -114,11 +114,15 @@ ApplicationWindow {
               var fromY = startY / squareSize;
               var toX   = (parent.x + mouseX) / squareSize;
               var toY   = (parent.y + mouseY) / squareSize;
-              mylogic.activateClearModelData();
-              //if (!logic.move(fromX, fromY, toX, toY)) {
+
+
+              if (mylogic.move(fromX, fromY, toX, toY)!=1) {
                 parent.x = startX;
                 parent.y = startY;
-              //}
+              }
+              //it complains "ReferenceError: mylogic is not defined". Just do not use beginResetModel in move(...)
+                mylogic.activateClearModelData();
+
             }
           }
         }
@@ -143,6 +147,7 @@ ApplicationWindow {
 
         if ((screenSwitchingGnome.state == "screen1")||(screenSwitchingGnome.state == "")||(screenSwitchingGnome.state == "screen3")) {
             screenSwitchingGnome.state = "screen2";
+            mylogic.fillGameField();
         }
 
       }
@@ -158,7 +163,8 @@ ApplicationWindow {
 
           if (screenSwitchingGnome.state == "screen2") {
              screenSwitchingGnome.state = "screen1";
-
+             //take away existing figurines
+              mylogic.clearGameField();
           }
 
         }
