@@ -95,6 +95,10 @@ public:
     Q_INVOKABLE int move(int fromX, int fromY, int toX, int toY);
     Q_INVOKABLE void fillGameField();
     Q_INVOKABLE void clearGameField();
+    ChessPieceSideTypes getCurrentMove() const;
+    void setCurrentMove(const ChessPieceSideTypes &value);
+    void increaseCurrentMove();
+
 protected:
     //see "Model/View Programming" and "QAbstractListModel class"
     // When subclassing QAbstractListModel, you must provide implementations of the rowCount() and data() functions.
@@ -109,6 +113,7 @@ private:
     QString boardPathToImage;
     std::vector<ChessPieceOnField> allChessPiecesDisplayed;
     ChessPieceMovementHandler* movementInfoModel;
+    ChessPieceSideTypes currentMove;
 signals:
     void boardSizeChanged(ChessIntegerCoordType);
     void boardImageChanged(std::string);

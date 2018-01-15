@@ -5,6 +5,8 @@ ChessFieldPieces::ChessFieldPieces(ChessIntegerCoordType in_boardSize, QObject *
 {
     this->allChessPiecesDisplayed = std::vector<ChessPieceOnField>();
     this->internalBoardSize = in_boardSize;
+
+    this->currentMove = FIRST_MOVE_SIDE;
 }
 
 ChessFieldPieces::ChessFieldPieces(QObject *parent) : QAbstractListModel(parent)
@@ -62,6 +64,23 @@ int ChessFieldPieces::rowCount(const QModelIndex &parent) const {
     return this->allChessPiecesDisplayed.size();
 }
 
+void ChessFieldPieces::setCurrentMove(const ChessPieceSideTypes &value)
+{
+    currentMove = value;
+}
+
+void ChessFieldPieces::increaseCurrentMove() {
+    if (currentMove == LAST_MOVE_SIDE) { currentMove = FIRST_MOVE_SIDE;
+    } else {
+        currentMove = ChessPieceSideTypes(currentMove+1);
+    }
+}
+
+ChessPieceSideTypes ChessFieldPieces::getCurrentMove() const
+{
+    return currentMove;
+}
+
 QString ChessFieldPieces::getBoardPathToImage() const
 {
     return boardPathToImage;
@@ -83,6 +102,9 @@ void ChessFieldPieces::activateDisplayAvailableMoves(int in_X, int in_Y)
         return;
     }
     ChessPieceOnField* instChessPiece = this->findByPosition(in_X, in_Y);
+    if (this->getCurrentMove()!=instChessPiece->getCurrentSideType()) {
+        return;
+    }
     if (instChessPiece!=nullptr) {
         ChessPieceMetadataBehavior* theBehaviorToConvert = instChessPiece->getInstBehaviorChessPiece();
         theBehaviorToConvert->performActionsBeforeMovement((void*)(instChessPiece->getMovementPerformed()));
@@ -186,6 +208,7 @@ int ChessFieldPieces::move(int fromX, int fromY, int toX, int toY) {
                     QModelIndex bottomRight = createIndex(initialChessPieceIndex, 0);
                     emit dataChanged(topLeft, bottomRight);
                     initialChessPiece->getInstBehaviorChessPiece()->performActionsAfterMovement( (void*)(initialChessPiece->getMovementPerformed() ) );
+                    this->increaseCurrentMove();
                     //endResetModel();
                 } else {
                     return 2;
@@ -197,6 +220,8 @@ int ChessFieldPieces::move(int fromX, int fromY, int toX, int toY) {
                 QModelIndex topLeft = createIndex(initialChessPieceIndex, 0);
                 QModelIndex bottomRight = createIndex(initialChessPieceIndex, 0);
                 emit dataChanged(topLeft, bottomRight);
+                initialChessPiece->getInstBehaviorChessPiece()->performActionsAfterMovement( (void*)(initialChessPiece->getMovementPerformed() ) );
+                this->increaseCurrentMove();
                 //update model
             }
         } else { //there is no figurine at FROM location!

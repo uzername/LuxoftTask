@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
     ChessFieldPieces gamefieldCurrentState;
       gamefieldCurrentState.setInternalBoardSize(8);
       gamefieldCurrentState.setBoardPathToImage("/images/chess_board.jpg");
+      gamefieldCurrentState.setCurrentMove(WHITE);
     initBehaviors();
     fillGameField(&gamefieldCurrentState);
 

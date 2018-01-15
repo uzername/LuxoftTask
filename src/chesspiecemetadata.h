@@ -14,7 +14,7 @@ typedef enum ChessPieceBehaviorTypes {
 typedef enum ChessPiecePatternTypes {
     VECTOR_TYPE, POINT_TYPE
 } ChessPiecePatternTypes;
-typedef enum ChessPieceSideTypes { BLACK, WHITE } ChessPieceSideTypes;
+typedef enum ChessPieceSideTypes { WHITE, BLACK, FIRST_MOVE_SIDE=WHITE, LAST_MOVE_SIDE=BLACK} ChessPieceSideTypes;
 /**
   * some predefined directions where the chess piece may move and attack.
   * TODO: declare Brasankham resolver for vectors. I guess this'll be kept for legacy
