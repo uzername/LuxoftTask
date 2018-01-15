@@ -21,4 +21,5 @@ HEADERS += \
     src/chesspiecemetadata.h \
     src/chessfieldpieces.h \
     src/chesspiecemovementhandler.h \
-    src/mymodelroles.h
+    src/mymodelroles.h \
+    src/moredefs.h

@@ -1,4 +1,5 @@
 #include "chesspiecemetadata.h"
+#include "moredefs.h"
 
 ChessPieceBehaviorTypes ChessPieceMetadataBehavior::getCurrentBehaviorType() const
 {
@@ -90,6 +91,15 @@ KingBehavior::KingBehavior()
     this->currentPointMovementPattern.push_back(ChessPiecePointPattern(1,-1));
     this->currentPointMovementPattern.push_back(ChessPiecePointPattern(-1,-1));
 
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(0,1));
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(0,-1));
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(1,0));
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(-1,0));
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(1,1));
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(-1,1));
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(1,-1));
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(-1,-1));
+
 }
 
 BlackPawnBehavior::BlackPawnBehavior()
@@ -108,9 +118,14 @@ void BlackPawnBehavior::performActionsAfterMovement(void *ud)
 
 void BlackPawnBehavior::performActionsBeforeMovement(void *ud)
 {
+    uint8_t internalMovementPerformed = *((uint8_t*)(ud));
     //add additional move if chess piece has not moved yet
-    if (*((uint8_t*)(ud)) == 0) {
-        this->currentPointMovementPattern.push_back(ChessPiecePointPattern(0,2));
+    if ( ( (internalMovementPerformed & BM_movementperformed) == 0 ) &&
+    (!(( (internalMovementPerformed & BM_gotpiecenorthorsouth) != 0 )||( (internalMovementPerformed & BM_gotpieceFarNorthorFarSouth) != 0))) )
+    {
+        //do not add move if there is a chess piece
+
+           this->currentPointMovementPattern.push_back(ChessPiecePointPattern(0,2));
     } else {
         for (unsigned i=0; i<currentPointMovementPattern.size(); i++ ){
             if (( ((ChessPiecePointPattern)currentPointMovementPattern[i]).getXPoint() == 0 )&&(((ChessPiecePointPattern)currentPointMovementPattern[i]).getYPoint() == 2)) {

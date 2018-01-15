@@ -64,6 +64,48 @@ int ChessFieldPieces::rowCount(const QModelIndex &parent) const {
     return this->allChessPiecesDisplayed.size();
 }
 
+void ChessFieldPieces::setFieldPieceBitMapVariable(ChessPieceOnField *in_piece) {
+    //check piece type
+    uint8_t* bitmapToPlace = in_piece->getMovementPerformed();
+    ChessPieceBehaviorTypes theBehaviorIdentifier = in_piece->getInstBehaviorChessPiece()->getCurrentBehaviorType();
+    uint8_t sideOfPiece = in_piece->getCurrentSideType();
+    sideOfPiece = sideOfPiece << 3;
+    if ((*bitmapToPlace & BM_movementperformed) == 1) { return; }
+    switch (theBehaviorIdentifier) {
+        case (WHITE_PAWN_TYPE): { //move from south to north
+            if ((in_piece->getCurrentYonField()-1 >=0)&&(this->findByPosition(in_piece->getCurrentXonField(), in_piece->getCurrentYonField()-1 ))) { //chess piece to south?
+                *bitmapToPlace = *bitmapToPlace | BM_gotpiecenorthorsouth;
+            } else {
+                *bitmapToPlace = *bitmapToPlace & ~BM_gotpiecenorthorsouth;
+            }
+            if ((in_piece->getCurrentYonField()-2 >=0)&&(this->findByPosition(in_piece->getCurrentXonField(), in_piece->getCurrentYonField()-2 )) ) { //chess piece to farsouth?
+                *bitmapToPlace = *bitmapToPlace | BM_gotpieceFarNorthorFarSouth;
+            } else {
+                *bitmapToPlace = *bitmapToPlace & ~BM_gotpieceFarNorthorFarSouth;
+            }
+            *bitmapToPlace = *bitmapToPlace | sideOfPiece;
+            break;
+        }
+        case (BLACK_PAWN_TYPE): { //moves from north to south
+            if ( (in_piece->getCurrentYonField()+1 < this->boardSize() )&&(this->findByPosition(in_piece->getCurrentXonField(), in_piece->getCurrentYonField()+1 )) ) { //chess piece to north?
+                *bitmapToPlace = *bitmapToPlace | BM_gotpiecenorthorsouth;
+            } else {
+                *bitmapToPlace = *bitmapToPlace & ~BM_gotpiecenorthorsouth;
+            }
+            if ((in_piece->getCurrentYonField()+2 < this->boardSize() )&&(this->findByPosition(in_piece->getCurrentXonField(), in_piece->getCurrentYonField()+2 ))) { //chess piece to farnorth?
+                *bitmapToPlace = *bitmapToPlace | BM_gotpieceFarNorthorFarSouth;
+            } else {
+                *bitmapToPlace = *bitmapToPlace & ~BM_gotpieceFarNorthorFarSouth;
+            }
+            *bitmapToPlace = *bitmapToPlace | sideOfPiece;
+            break;
+        default: {
+            break;
+            }
+        }
+    }
+}
+
 void ChessFieldPieces::setCurrentMove(const ChessPieceSideTypes &value)
 {
     currentMove = value;
@@ -107,6 +149,7 @@ void ChessFieldPieces::activateDisplayAvailableMoves(int in_X, int in_Y)
     }
     if (instChessPiece!=nullptr) {
         ChessPieceMetadataBehavior* theBehaviorToConvert = instChessPiece->getInstBehaviorChessPiece();
+        this->setFieldPieceBitMapVariable(instChessPiece);
         theBehaviorToConvert->performActionsBeforeMovement((void*)(instChessPiece->getMovementPerformed()));
         std::vector<displayMovementStructure> currentStructureListMovements = std::vector<displayMovementStructure>();
         // https://stackoverflow.com/questions/2754650/getting-value-of-stdlistiterator-to-pointer
@@ -128,8 +171,26 @@ void ChessFieldPieces::activateDisplayAvailableMoves(int in_X, int in_Y)
                     theSingleStructure.mvAtkPositionY = tmpmvAtkPositionY;
 
                 } else { //there is another chess piece there...
+                    //better to resolve attack in a separate similar cycle. Skip this move by now
+                    continue;
+                }
+                currentStructureListMovements.push_back(theSingleStructure);
+            }
+        }
+        for (std::vector<ChessPiecePointPattern>::iterator it = theBehaviorToConvert->getAttackPatternArrayIterator(); it!=theBehaviorToConvert->getAttackPatternArrayIteratorEnd(); it++) {
+            displayMovementStructure theSingleStructure = displayMovementStructure();
+            theSingleStructure.mvAtkCurrentType = ATTACK_TYPE;
+            if (it->getInstanceChessPiecePatternType() == POINT_TYPE) {
+                int tmpmvAtkPositionX = in_X+((ChessPiecePointPattern*)(&*it))->getXPoint();
+                int tmpmvAtkPositionY = in_Y+((ChessPiecePointPattern*)(&*it))->getYPoint();
+                //cannot move beyond the gamefield, skipping
+                if (tmpmvAtkPositionX < 0 || tmpmvAtkPositionY < 0 || tmpmvAtkPositionX>=this->internalBoardSize || tmpmvAtkPositionY>=this->internalBoardSize) {continue;}
+                //check other figurines on that position
+                ChessPieceOnField* collisionFigurine = this->findByPosition(tmpmvAtkPositionX, tmpmvAtkPositionY);
+                if (collisionFigurine == nullptr) { //no chess piece on that position, not moving
+                    continue;
+                } else {
                     if (instChessPiece->getCurrentSideType() != collisionFigurine->getCurrentSideType()) {
-                        theSingleStructure.mvAtkCurrentType = ATTACK_TYPE;
                         theSingleStructure.mvAtkPositionX = tmpmvAtkPositionX;
                         theSingleStructure.mvAtkPositionY = tmpmvAtkPositionY;
                     } else { //do not do anything, it's an ally.
@@ -179,6 +240,9 @@ int ChessFieldPieces::move(int fromX, int fromY, int toX, int toY) {
     if (this->movementInfoModel == nullptr) {
         return 2;
     }
+    if ((fromX == toX)&&(fromY==toY)) {
+        return 0;
+    }
     //find out if toX, toY are in movementInfoModel
     for(std::vector<displayMovementStructure>::iterator it=this->movementInfoModel->getMvAtkStructuresIteratorBegin(); it!=this->movementInfoModel->getMvAtkStructuresIteratorEnd(); it++) {
         if( (it->mvAtkPositionX != toX) || (it->mvAtkPositionY != toY) ) {
@@ -191,7 +255,7 @@ int ChessFieldPieces::move(int fromX, int fromY, int toX, int toY) {
         ChessPieceOnField* possibleRivalChessPiece = this->findByPosition(toX, toY, &rivalChessPieceIndex);
         if (initialChessPiece != nullptr) {
             if (possibleRivalChessPiece != nullptr) { //there is something!
-                if (possibleRivalChessPiece->getCurrentSideType()!=initialChessPiece->getCurrentSideType()) {
+                if ((possibleRivalChessPiece->getCurrentSideType()!=initialChessPiece->getCurrentSideType())) {
                     //beginResetModel and endResetModel cause ReferenceError: mylogic is not defined in qml file
                     //beginResetModel();
                     //move the piece

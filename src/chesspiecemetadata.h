@@ -17,7 +17,7 @@ typedef enum ChessPiecePatternTypes {
 typedef enum ChessPieceSideTypes { WHITE, BLACK, FIRST_MOVE_SIDE=WHITE, LAST_MOVE_SIDE=BLACK} ChessPieceSideTypes;
 /**
   * some predefined directions where the chess piece may move and attack.
-  * TODO: declare Brasankham resolver for vectors. I guess this'll be kept for legacy
+  * TODO: declare Brasankham resolver for vectors. Too fancy!
   */
 typedef enum ChessPiecePatternVectorTypes {
     NORTH, SOUTH, EAST, WEST, NORTHEAST, SOUTHEAST, SOUTHWEST, NORTHWEST

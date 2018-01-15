@@ -8,7 +8,10 @@
 #include <memory>
 
 #include "mymodelroles.h"
+   //BITMAPS FOR movementPerformed VARIABLE for PAWN (BOTH BLACK AND WHITE).
+#include "moredefs.h"
 
+//======================================
 /**
  * @brief The ChessPieceOnField class represents a single item on field. Independent from QT, may be worth moving to separate file
  */
@@ -19,7 +22,9 @@ protected:
     std::string pathToImage;
     ChessIntegerCoordType currentXonField;
     ChessIntegerCoordType currentYonField;
-
+    /**
+     * @brief movementPerformed - this number contains metadata for pawn. Why create subclass and fiddle with it if you can contain all the data in uint8_t?
+     */
     uint8_t movementPerformed;
 
     ChessPieceSideTypes currentSideType;
@@ -114,6 +119,10 @@ private:
     std::vector<ChessPieceOnField> allChessPiecesDisplayed;
     ChessPieceMovementHandler* movementInfoModel;
     ChessPieceSideTypes currentMove;
+    /**
+     * @brief setFieldPieceBitMapVariable - used to set value of movementPerformed for some chess piece. UNUSED!
+     */
+    void setFieldPieceBitMapVariable(ChessPieceOnField* in_piece);
 signals:
     void boardSizeChanged(ChessIntegerCoordType);
     void boardImageChanged(std::string);
