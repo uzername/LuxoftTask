@@ -121,6 +121,13 @@ public:
     void performActionsAfterMovement(void *ud);
     void performActionsBeforeMovement(void *ud);
 };
+class WhitePawnBehavior: public ChessPieceMetadataBehavior {
+public:
+
+    WhitePawnBehavior();
+    void performActionsAfterMovement(void* ud);
+    void performActionsBeforeMovement(void* ud);
+};
 //these instances are shared across all chess pieces!
 /*
 extern KingBehavior* instKingBehavior;

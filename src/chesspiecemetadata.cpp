@@ -40,6 +40,9 @@ void ChessPieceMetadataBehavior::performActionsBeforeMovement(void *ud)
 ChessPieceMetadataBehavior::ChessPieceMetadataBehavior() {
     this->currentPointMovementPattern = std::vector<ChessPiecePointPattern>();
     this->currentPointAttackPattern = std::vector<ChessPiecePointPattern>();
+
+    this->currentVectorAttackPattern = std::vector<ChessPieceVectorPattern>();
+    this->currentVectorMovementPattern = std::vector<ChessPieceVectorPattern>();
 }
 
 ChessPiecePatternTypes ChessPiecePattern::getInstanceChessPiecePatternType() const
@@ -101,7 +104,13 @@ KingBehavior::KingBehavior()
     this->currentPointAttackPattern.push_back(ChessPiecePointPattern(-1,-1));
 
 }
-
+WhitePawnBehavior::WhitePawnBehavior()
+    :ChessPieceMetadataBehavior() {
+    this->currentBehaviorType = WHITE_PAWN_TYPE;
+    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(0,-1));
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(-1,1));
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(-1,-1));
+}
 BlackPawnBehavior::BlackPawnBehavior()
     :ChessPieceMetadataBehavior() {
     this->currentBehaviorType = BLACK_PAWN_TYPE;
@@ -141,6 +150,7 @@ KingBehavior* instKingBehavior;
 BlackPawnBehavior* instBlackPawnBehavior;
 */
 std::unordered_map<int, ChessPieceMetadataBehavior*> globalBehaviorCollection;
+
 void initBehaviors() {
     /*
     instKingBehavior = new KingBehavior();
@@ -149,6 +159,7 @@ void initBehaviors() {
     globalBehaviorCollection = std::unordered_map<int, ChessPieceMetadataBehavior*>();
     globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(KING_TYPE, new KingBehavior()) );
     globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(BLACK_PAWN_TYPE, new BlackPawnBehavior()) );
+    globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(WHITE_PAWN_TYPE, new WhitePawnBehavior()) );
 }
 
 void deinitBehaviors() {
@@ -162,3 +173,29 @@ void deinitBehaviors() {
 }
 //=======
 
+
+
+
+void WhitePawnBehavior::performActionsAfterMovement(void *ud)
+{
+    *((uint8_t*)(ud)) = 1;
+}
+
+void WhitePawnBehavior::performActionsBeforeMovement(void *ud)
+{
+    uint8_t internalMovementPerformed = *((uint8_t*)(ud));
+    //add additional move if chess piece has not moved yet
+    if ( ( (internalMovementPerformed & BM_movementperformed) == 0 ) &&
+    (!(( (internalMovementPerformed & BM_gotpiecenorthorsouth) != 0 )||( (internalMovementPerformed & BM_gotpieceFarNorthorFarSouth) != 0))) )
+    {
+        //do not add move if there is a chess piece
+
+           this->currentPointMovementPattern.push_back(ChessPiecePointPattern(0,-2));
+    } else {
+        for (unsigned i=0; i<currentPointMovementPattern.size(); i++ ){
+            if (( ((ChessPiecePointPattern)currentPointMovementPattern[i]).getXPoint() == 0 )&&(((ChessPiecePointPattern)currentPointMovementPattern[i]).getYPoint() == -2)) {
+                currentPointMovementPattern.erase(currentPointMovementPattern.begin()+i);
+            }
+        }
+    }
+}
