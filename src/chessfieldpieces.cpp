@@ -301,15 +301,23 @@ int ChessFieldPieces::move(int fromX, int fromY, int toX, int toY) {
 }
 
 void ChessFieldPieces::fillGameField() {
-    unsigned numberOfItemsToInsert = 4;
+    unsigned numberOfItemsToInsert = 8;
     this->beginInsertRows(QModelIndex(),0,numberOfItemsToInsert-1);
+    ChessPieceOnField whitePawn = ChessPieceOnField(globalBehaviorCollection.at(WHITE_PAWN_TYPE), "/images/white_pawn.svg");
+    whitePawn.setCurrentXonField(0); whitePawn.setCurrentYonField(6); whitePawn.setCurrentSideType(WHITE);
+    this->appendPieceOnField(whitePawn);
+
     ChessPieceOnField whiteKing = ChessPieceOnField(globalBehaviorCollection.at(KING_TYPE) , "/images/white_king.svg");
     whiteKing.setCurrentXonField(4); whiteKing.setCurrentYonField(7); whiteKing.setCurrentSideType(WHITE);
     this->appendPieceOnField(whiteKing);
 
-    ChessPieceOnField whitePawn = ChessPieceOnField(globalBehaviorCollection.at(WHITE_PAWN_TYPE), "/images/white_pawn.svg");
-    whitePawn.setCurrentXonField(0); whitePawn.setCurrentYonField(6); whitePawn.setCurrentSideType(WHITE);
-    this->appendPieceOnField(whitePawn);
+    ChessPieceOnField whiteRook1 = ChessPieceOnField(globalBehaviorCollection.at(ROOK_TYPE), "/images/white_rook.svg");
+    whiteRook1.setCurrentXonField(0); whiteRook1.setCurrentYonField(7); whiteRook1.setCurrentSideType(WHITE);
+    this->appendPieceOnField(whiteRook1);
+
+    ChessPieceOnField whiteRook2 = ChessPieceOnField(globalBehaviorCollection.at(ROOK_TYPE), "/images/white_rook.svg");
+    whiteRook2.setCurrentXonField(7); whiteRook2.setCurrentYonField(7); whiteRook2.setCurrentSideType(WHITE);
+    this->appendPieceOnField(whiteRook2);
 
     ChessPieceOnField blackPawn = ChessPieceOnField(globalBehaviorCollection.at(BLACK_PAWN_TYPE), "/images/black_pawn.svg");
     blackPawn.setCurrentXonField(0); blackPawn.setCurrentYonField(1); blackPawn.setCurrentSideType(BLACK);
@@ -318,6 +326,14 @@ void ChessFieldPieces::fillGameField() {
     ChessPieceOnField blackKing = ChessPieceOnField(globalBehaviorCollection.at(KING_TYPE), "/images/black_king.svg");
     blackKing.setCurrentXonField(4); blackKing.setCurrentYonField(3); blackKing.setCurrentSideType(BLACK);
     this->appendPieceOnField(blackKing);
+
+    ChessPieceOnField blackRook1 = ChessPieceOnField(globalBehaviorCollection.at(ROOK_TYPE), "/images/black_rook.svg");
+    blackRook1.setCurrentXonField(0); blackRook1.setCurrentYonField(0); blackRook1.setCurrentSideType(BLACK);
+    this->appendPieceOnField(blackRook1);
+
+    ChessPieceOnField blackRook2 = ChessPieceOnField(globalBehaviorCollection.at(ROOK_TYPE), "/images/black_rook.svg");
+    blackRook2.setCurrentXonField(7); blackRook2.setCurrentYonField(0); blackRook2.setCurrentSideType(BLACK);
+    this->appendPieceOnField(blackRook2);
 
     this->endInsertRows();
 }
