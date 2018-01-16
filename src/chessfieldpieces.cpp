@@ -144,6 +144,9 @@ void ChessFieldPieces::activateDisplayAvailableMoves(int in_X, int in_Y)
         return;
     }
     ChessPieceOnField* instChessPiece = this->findByPosition(in_X, in_Y);
+    if (instChessPiece == nullptr) { //it means a critical failure!
+        return;
+    }
     if (this->getCurrentMove()!=instChessPiece->getCurrentSideType()) {
         return;
     }

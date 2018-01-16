@@ -128,6 +128,12 @@ public:
     void performActionsAfterMovement(void* ud);
     void performActionsBeforeMovement(void* ud);
 };
+class RookBehavior: public ChessPieceMetadataBehavior {
+public:
+    RookBehavior();
+    void performActionsAfterMovement(void *ud) {    };
+    void performActionsBeforeMovement(void *ud) {   };
+}
 //these instances are shared across all chess pieces!
 /*
 extern KingBehavior* instKingBehavior;

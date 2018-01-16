@@ -105,6 +105,20 @@ ApplicationWindow {
               startY = parent.y;
                 var preparedX = startX / squareSize;
                 var preparedY = startY / squareSize;
+                console.log("==OnPressed==");
+                console.log("[startX, startY]=",startX,"||",startY);
+                console.log("[preparedX, preparedY]=",preparedX,"||",preparedY);
+
+                //this workaround may make things even worse. In theory, it should not do this
+                /*
+                if ( ((preparedX % 1 !== 0) && (Number(preparedX) === preparedX))||((preparedY % 1 !== 0) && (Number(preparedY) === preparedY)) ) {
+                  parent.x=Math.round(preparedX)*squareSize;
+                  parent.y=Math.round(preparedY)*squareSize;
+
+                    preparedX = startX / squareSize;
+                    preparedY = startY / squareSize;
+                }
+                */
                 mylogic.activateDisplayAvailableMoves(preparedX, preparedY);
 
             }
@@ -112,15 +126,36 @@ ApplicationWindow {
             onReleased: {
               var fromX = startX / squareSize;
               var fromY = startY / squareSize;
-              var toX   = (parent.x + mouseX) / squareSize;
-              var toY   = (parent.y + mouseY) / squareSize;
-
-
-              if (mylogic.move(fromX, fromY, toX, toY)!=1) {
+              var useMouseX = mouseX; var useMouseY = mouseY;
+                /*
+                if ((useMouseX >= parent.x+squareSize)||(useMouseX<=parent.x)) {
+                    useMouseX = parent.x+0.6*squareSize;
+                }
+                if ((useMouseY >= parent.y+squareSize)||(useMouseY<=0)) {
+                    useMouseY = parent.y+0.6*squareSize;
+                }
+                */
+              var toX   = (parent.x + useMouseX) / squareSize;
+              var toY   = (parent.y + useMouseY) / squareSize;
+                console.debug("==OnReleased==");
+                console.log("[mouseX, mouseY]=",mouseX,"||",mouseY);
+                console.log("[startX, startY]=", startX,"||",startY);
+                console.debug("[fromX,fromY]=",fromX,"||",fromY);
+                console.debug("[toX,toY]=",toX,"||",toY);
+                var tmpres = mylogic.move(fromX, fromY, toX, toY)
+              if (tmpres!==1) {
                 parent.x = startX;
                 parent.y = startY;
               }
-              //it complains "ReferenceError: mylogic is not defined". Just do not use beginResetModel in move(...)
+              //!!! SOMETIMES CHESSPIECE MAY GET STUCK AFTER MOVEMENT HAS BEEN PERFORMED, RENDERING A PIECE INACCESSIBLE !!!
+              //in this case fromX, fromY are fractional numbers. There should be a more neat solution, but here is workaround.
+              // https://stackoverflow.com/questions/3885817/how-do-i-check-that-a-number-is-float-or-integer
+              if ( ((fromX % 1 !== 0) && (Number(fromX) === fromX))||((fromY % 1 !== 0) && (Number(fromY) === fromY)) ) {
+                parent.x=Math.round(fromX)*squareSize;
+                parent.y=Math.round(fromY)*squareSize;
+              }
+
+              //activateClearModelData() complains "ReferenceError: mylogic is not defined". Just do not use beginResetModel in move(...)
                 mylogic.activateClearModelData();
 
             }

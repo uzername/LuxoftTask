@@ -119,6 +119,19 @@ BlackPawnBehavior::BlackPawnBehavior()
     this->currentPointAttackPattern.push_back(ChessPiecePointPattern(1,-1));
 
 }
+RookBehavior::RookBehavior()
+    :ChessPieceMetadataBehavior() {
+    this->currentBehaviorType = ROOK_TYPE;
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(SOUTH));
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(NORTH) );
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(EAST) );
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(WEST) );
+
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(SOUTH) );
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(NORTH) );
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(EAST) );
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(WEST) );
+}
 
 void BlackPawnBehavior::performActionsAfterMovement(void *ud)
 {
@@ -160,6 +173,7 @@ void initBehaviors() {
     globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(KING_TYPE, new KingBehavior()) );
     globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(BLACK_PAWN_TYPE, new BlackPawnBehavior()) );
     globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(WHITE_PAWN_TYPE, new WhitePawnBehavior()) );
+    globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(ROOK_TYPE, new RookBehavior()) );
 }
 
 void deinitBehaviors() {
