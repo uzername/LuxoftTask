@@ -27,6 +27,23 @@ std::vector<ChessPiecePointPattern>::iterator ChessPieceMetadataBehavior::getAtt
     return this->currentPointAttackPattern.end();
 }
 
+std::vector<ChessPieceVectorPattern>::iterator ChessPieceMetadataBehavior::getVectorMovementPatternArrayIterator() {
+    return this->currentVectorMovementPattern.begin();
+}
+
+std::vector<ChessPieceVectorPattern>::iterator ChessPieceMetadataBehavior::getVectorMovementPatternArrayIteratorEnd() {
+    return this->currentVectorMovementPattern.end();
+}
+
+std::vector<ChessPieceVectorPattern>::iterator ChessPieceMetadataBehavior::getVectorAttackPatternArrayIterator() {
+    return this->currentVectorAttackPattern.begin();
+}
+
+std::vector<ChessPieceVectorPattern>::iterator ChessPieceMetadataBehavior::getVectorAttackPatternArrayIteratorEnd() {
+    return this->currentVectorAttackPattern.end();
+}
+
+
 void ChessPieceMetadataBehavior::performActionsAfterMovement(void *ud)
 {
 
@@ -133,6 +150,57 @@ RookBehavior::RookBehavior()
     this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(WEST) );
 }
 
+BishopBehavior::BishopBehavior()
+    :ChessPieceMetadataBehavior() {
+    this->currentBehaviorType = BISHOP_TYPE;
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(NORTHEAST));
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(NORTHWEST));
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(SOUTHWEST));
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(SOUTHEAST));
+
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(NORTHEAST));
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(NORTHWEST));
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(SOUTHWEST));
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(SOUTHEAST));
+}
+
+KnightBehavior::KnightBehavior()
+ :ChessPieceMetadataBehavior() {
+    this->currentBehaviorType = KNIGHT_TYPE;
+    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(1,-2)  );
+    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(-1,-2) );
+    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(1,2)   );
+    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(-1,2)  );
+
+    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(1,-2)  );
+    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(-1,-2) );
+    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(1,2)   );
+    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(-1,2)  );
+}
+QueenBehavior::QueenBehavior()
+    :ChessPieceMetadataBehavior() {
+    this->currentBehaviorType = QUEEN_TYPE;
+    //bishop
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(NORTHEAST));
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(NORTHWEST));
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(SOUTHWEST));
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(SOUTHEAST));
+
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(NORTHEAST));
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(NORTHWEST));
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(SOUTHWEST));
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(SOUTHEAST));
+    //rook
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(SOUTH));
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(NORTH) );
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(EAST) );
+    this->currentVectorMovementPattern.push_back(ChessPieceVectorPattern(WEST) );
+
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(SOUTH) );
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(NORTH) );
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(EAST) );
+    this->currentVectorAttackPattern.push_back(ChessPieceVectorPattern(WEST) );
+}
 void BlackPawnBehavior::performActionsAfterMovement(void *ud)
 {
     *((uint8_t*)(ud)) = 1;
@@ -174,7 +242,11 @@ void initBehaviors() {
     globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(BLACK_PAWN_TYPE, new BlackPawnBehavior()) );
     globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(WHITE_PAWN_TYPE, new WhitePawnBehavior()) );
     globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(ROOK_TYPE, new RookBehavior()) );
+    globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(BISHOP_TYPE, new BishopBehavior()) );
+    globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(KNIGHT_TYPE, new KnightBehavior()) );
+    globalBehaviorCollection.insert(std::make_pair<int, ChessPieceMetadataBehavior*>(QUEEN_TYPE, new QueenBehavior()) );
 }
+
 
 void deinitBehaviors() {
     /*
@@ -213,3 +285,5 @@ void WhitePawnBehavior::performActionsBeforeMovement(void *ud)
         }
     }
 }
+
+

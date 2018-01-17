@@ -157,6 +157,7 @@ void ChessFieldPieces::activateDisplayAvailableMoves(int in_X, int in_Y)
         std::vector<displayMovementStructure> currentStructureListMovements = std::vector<displayMovementStructure>();
         // https://stackoverflow.com/questions/2754650/getting-value-of-stdlistiterator-to-pointer
         // https://stackoverflow.com/questions/409348/iteration-over-stdvector-unsigned-vs-signed-index-variable
+        //===POINT MOVEMENT AND ATTACK PATTERNS===
         for (std::vector<ChessPiecePointPattern>::iterator it = theBehaviorToConvert->getMovementPatternArrayIterator(); it!= theBehaviorToConvert->getMovementPatternArrayIteratorEnd();it++) {
             displayMovementStructure theSingleStructure = displayMovementStructure();
             theSingleStructure.mvAtkCurrentType = MOVEMENT_TYPE;
@@ -203,6 +204,109 @@ void ChessFieldPieces::activateDisplayAvailableMoves(int in_X, int in_Y)
                 currentStructureListMovements.push_back(theSingleStructure);
             }
         }
+        //===VECTOR MOVEMENT AND ATTACK PATTERNS===
+        for (std::vector<ChessPieceVectorPattern>::iterator it = theBehaviorToConvert->getVectorMovementPatternArrayIterator(); it!=theBehaviorToConvert->getVectorMovementPatternArrayIteratorEnd(); it++) {
+            displayMovementStructure theSingleStructure = displayMovementStructure();
+            theSingleStructure.mvAtkCurrentType = MOVEMENT_TYPE;
+            ChessPiecePatternVectorTypes currentTypeOfVector = ((it))->getTheDirectionType();
+            int dx; int dy;
+            switch (currentTypeOfVector) {
+                case EAST: {
+                    dx = 1; dy=0; break;
+                }
+                case WEST: {
+                    dx=-1; dy=0; break;
+                }
+                case NORTH: {
+                    dx=0; dy=1; break;
+                }
+                case SOUTH: {
+                    dx=0; dy=-1; break;
+                }
+                case NORTHEAST: {
+                    dx=1; dy=1; break;
+                }
+                case NORTHWEST: {
+                    dx=-1; dy=1; break;
+                }
+                case SOUTHEAST: {
+                    dx=1; dy=-1; break;
+                }
+                case SOUTHWEST: {
+                    dx=-1; dy=-1; break;
+                }
+                default: {
+                    return;
+                    break;
+                }
+            }
+                int tmpmvAtkPositionX = in_X+dx; int tmpmvAtkPositionY = in_Y+dy;
+                ChessPieceOnField* collisionFigurine = this->findByPosition(tmpmvAtkPositionX, tmpmvAtkPositionY);
+                while ((collisionFigurine==nullptr)&&(tmpmvAtkPositionX>=0)&&(tmpmvAtkPositionY>=0)&&(tmpmvAtkPositionX<=this->boardSize()-1)&&(tmpmvAtkPositionY<=this->boardSize()-1)) {
+                    theSingleStructure.mvAtkPositionX = tmpmvAtkPositionX;
+                    theSingleStructure.mvAtkPositionY = tmpmvAtkPositionY;
+                    theSingleStructure.mvAtkCurrentType = MOVEMENT_TYPE;
+                    currentStructureListMovements.push_back(theSingleStructure);
+                    tmpmvAtkPositionX+=dx; tmpmvAtkPositionY+=dy;
+                    collisionFigurine = this->findByPosition(tmpmvAtkPositionX, tmpmvAtkPositionY);
+                }
+
+        }
+
+        for (std::vector<ChessPieceVectorPattern>::iterator it = theBehaviorToConvert->getVectorAttackPatternArrayIterator(); it!=theBehaviorToConvert->getVectorAttackPatternArrayIteratorEnd(); it++) {
+            displayMovementStructure theSingleStructure = displayMovementStructure();
+            theSingleStructure.mvAtkCurrentType = ATTACK_TYPE;
+            ChessPiecePatternVectorTypes currentTypeOfVector = ((it))->getTheDirectionType();
+            int dx; int dy;
+            switch (currentTypeOfVector) {
+                case EAST: {
+                    dx = 1; dy=0; break;
+                }
+                case WEST: {
+                    dx=-1; dy=0; break;
+                }
+                case NORTH: {
+                    dx=0; dy=1; break;
+                }
+                case SOUTH: {
+                    dx=0; dy=-1; break;
+                }
+                case NORTHEAST: {
+                    dx=1; dy=1; break;
+                }
+                case NORTHWEST: {
+                    dx=-1; dy=1; break;
+                }
+                case SOUTHEAST: {
+                    dx=1; dy=-1; break;
+                }
+                case SOUTHWEST: {
+                    dx=-1; dy=-1; break;
+                }
+                default: {
+                    return;
+                    break;
+                }
+            }
+                int tmpmvAtkPositionX = in_X+dx; int tmpmvAtkPositionY = in_Y+dy;
+                ChessPieceOnField* collisionFigurine = this->findByPosition(tmpmvAtkPositionX, tmpmvAtkPositionY);
+                while ((collisionFigurine==nullptr)&&(tmpmvAtkPositionX>=0)&&(tmpmvAtkPositionY>=0)&&(tmpmvAtkPositionX<=this->boardSize()-1)&&(tmpmvAtkPositionY<=this->boardSize()-1)) {
+
+                    collisionFigurine = this->findByPosition(tmpmvAtkPositionX, tmpmvAtkPositionY);
+                    tmpmvAtkPositionX+=dx; tmpmvAtkPositionY+=dy;
+                }
+                if (collisionFigurine!=nullptr) {
+                    if (collisionFigurine->getCurrentSideType()!=instChessPiece->getCurrentSideType()) {
+                    tmpmvAtkPositionX-=dx; tmpmvAtkPositionY-=dy;
+                    theSingleStructure.mvAtkPositionX = tmpmvAtkPositionX;
+                    theSingleStructure.mvAtkPositionY = tmpmvAtkPositionY;
+                    theSingleStructure.mvAtkCurrentType = ATTACK_TYPE;
+                    currentStructureListMovements.push_back(theSingleStructure);
+                    }
+                }
+
+        }
+
         movementInfoModel->setAllMvAtkStructures(currentStructureListMovements);
     }
 }
@@ -301,40 +405,98 @@ int ChessFieldPieces::move(int fromX, int fromY, int toX, int toY) {
 }
 
 void ChessFieldPieces::fillGameField() {
-    unsigned numberOfItemsToInsert = 8;
+    unsigned numberOfItemsToInsert = 18;
     this->beginInsertRows(QModelIndex(),0,numberOfItemsToInsert-1);
+    try {
     ChessPieceOnField whitePawn = ChessPieceOnField(globalBehaviorCollection.at(WHITE_PAWN_TYPE), "/images/white_pawn.svg");
     whitePawn.setCurrentXonField(0); whitePawn.setCurrentYonField(6); whitePawn.setCurrentSideType(WHITE);
     this->appendPieceOnField(whitePawn);
-
+    } catch (std::out_of_range& e) {  }
+    try {
     ChessPieceOnField whiteKing = ChessPieceOnField(globalBehaviorCollection.at(KING_TYPE) , "/images/white_king.svg");
     whiteKing.setCurrentXonField(4); whiteKing.setCurrentYonField(7); whiteKing.setCurrentSideType(WHITE);
     this->appendPieceOnField(whiteKing);
-
+    } catch (std::out_of_range& e) {  }
+    try{
     ChessPieceOnField whiteRook1 = ChessPieceOnField(globalBehaviorCollection.at(ROOK_TYPE), "/images/white_rook.svg");
     whiteRook1.setCurrentXonField(0); whiteRook1.setCurrentYonField(7); whiteRook1.setCurrentSideType(WHITE);
     this->appendPieceOnField(whiteRook1);
-
+    } catch (std::out_of_range& e) {  }
+    try {
     ChessPieceOnField whiteRook2 = ChessPieceOnField(globalBehaviorCollection.at(ROOK_TYPE), "/images/white_rook.svg");
     whiteRook2.setCurrentXonField(7); whiteRook2.setCurrentYonField(7); whiteRook2.setCurrentSideType(WHITE);
     this->appendPieceOnField(whiteRook2);
-
+    } catch (std::out_of_range& e) {  }
+    try {
+    ChessPieceOnField whiteBishop1 = ChessPieceOnField(globalBehaviorCollection.at(BISHOP_TYPE), "/images/white_bishop.svg");
+    whiteBishop1.setCurrentXonField(2); whiteBishop1.setCurrentYonField(7); whiteBishop1.setCurrentSideType(WHITE);
+    this->appendPieceOnField(whiteBishop1);
+    } catch (std::out_of_range& e) {  }
+    try {
+    ChessPieceOnField whiteBishop2 = ChessPieceOnField(globalBehaviorCollection.at(BISHOP_TYPE), "/images/white_bishop.svg");
+    whiteBishop2.setCurrentXonField(5); whiteBishop2.setCurrentYonField(7); whiteBishop2.setCurrentSideType(WHITE);
+    this->appendPieceOnField(whiteBishop2);
+    } catch (std::out_of_range& e) {  }
+    try {
+        ChessPieceOnField whiteKnight1 = ChessPieceOnField(globalBehaviorCollection.at(KNIGHT_TYPE), "/images/white_knight.svg");
+        whiteKnight1.setCurrentXonField(6); whiteKnight1.setCurrentYonField(7); whiteKnight1.setCurrentSideType(WHITE);
+        this->appendPieceOnField(whiteKnight1);
+    } catch (std::out_of_range& e) {  }
+    try {
+        ChessPieceOnField whiteKnight2 = ChessPieceOnField(globalBehaviorCollection.at(KNIGHT_TYPE), "/images/white_knight.svg");
+        whiteKnight2.setCurrentXonField(1); whiteKnight2.setCurrentYonField(7); whiteKnight2.setCurrentSideType(WHITE);
+        this->appendPieceOnField(whiteKnight2);
+    } catch (std::out_of_range& e) {  }
+    try {
+        ChessPieceOnField whiteQueen = ChessPieceOnField(globalBehaviorCollection.at(QUEEN_TYPE), "/images/white_queen.svg");
+        whiteQueen.setCurrentXonField(3); whiteQueen.setCurrentYonField(7); whiteQueen.setCurrentSideType(WHITE);
+        this->appendPieceOnField(whiteQueen);
+    } catch (std::out_of_range& e) {  }
+    try {
     ChessPieceOnField blackPawn = ChessPieceOnField(globalBehaviorCollection.at(BLACK_PAWN_TYPE), "/images/black_pawn.svg");
     blackPawn.setCurrentXonField(0); blackPawn.setCurrentYonField(1); blackPawn.setCurrentSideType(BLACK);
     this->appendPieceOnField(blackPawn);
-
+    } catch (std::out_of_range& e) {  }
+    try {
     ChessPieceOnField blackKing = ChessPieceOnField(globalBehaviorCollection.at(KING_TYPE), "/images/black_king.svg");
-    blackKing.setCurrentXonField(4); blackKing.setCurrentYonField(3); blackKing.setCurrentSideType(BLACK);
+    blackKing.setCurrentXonField(4); blackKing.setCurrentYonField(0); blackKing.setCurrentSideType(BLACK);
     this->appendPieceOnField(blackKing);
-
+    } catch (std::out_of_range& e) {  }
+    try {
     ChessPieceOnField blackRook1 = ChessPieceOnField(globalBehaviorCollection.at(ROOK_TYPE), "/images/black_rook.svg");
     blackRook1.setCurrentXonField(0); blackRook1.setCurrentYonField(0); blackRook1.setCurrentSideType(BLACK);
     this->appendPieceOnField(blackRook1);
-
+    } catch (std::out_of_range& e) {  }
+    try {
     ChessPieceOnField blackRook2 = ChessPieceOnField(globalBehaviorCollection.at(ROOK_TYPE), "/images/black_rook.svg");
     blackRook2.setCurrentXonField(7); blackRook2.setCurrentYonField(0); blackRook2.setCurrentSideType(BLACK);
     this->appendPieceOnField(blackRook2);
-
+    } catch (std::out_of_range& e) {  }
+    try {
+    ChessPieceOnField blackBishop1 = ChessPieceOnField(globalBehaviorCollection.at(BISHOP_TYPE), "/images/black_bishop.svg");
+    blackBishop1.setCurrentXonField(2); blackBishop1.setCurrentYonField(0); blackBishop1.setCurrentSideType(BLACK);
+    this->appendPieceOnField(blackBishop1);
+    } catch (std::out_of_range& e) {  }
+    try {
+    ChessPieceOnField blackBishop2 = ChessPieceOnField(globalBehaviorCollection.at(BISHOP_TYPE), "/images/black_bishop.svg");
+    blackBishop2.setCurrentXonField(5); blackBishop2.setCurrentYonField(0); blackBishop2.setCurrentSideType(BLACK);
+    this->appendPieceOnField(blackBishop2);
+    } catch (std::out_of_range& e) {  }
+    try {
+        ChessPieceOnField blackKnight1 = ChessPieceOnField(globalBehaviorCollection.at(KNIGHT_TYPE), "/images/black_knight.svg");
+        blackKnight1.setCurrentXonField(6); blackKnight1.setCurrentYonField(0); blackKnight1.setCurrentSideType(BLACK);
+        this->appendPieceOnField(blackKnight1);
+    } catch (std::out_of_range& e) {  }
+    try {
+        ChessPieceOnField blackKnight2 = ChessPieceOnField(globalBehaviorCollection.at(KNIGHT_TYPE), "/images/black_knight.svg");
+        blackKnight2.setCurrentXonField(1); blackKnight2.setCurrentYonField(0); blackKnight2.setCurrentSideType(BLACK);
+        this->appendPieceOnField(blackKnight2);
+    } catch (std::out_of_range& e) {  }
+    try {
+        ChessPieceOnField blackQueen = ChessPieceOnField(globalBehaviorCollection.at(QUEEN_TYPE), "/images/black_queen.svg");
+        blackQueen.setCurrentXonField(3); blackQueen.setCurrentYonField(0); blackQueen.setCurrentSideType(BLACK);
+        this->appendPieceOnField(blackQueen);
+    } catch (std::out_of_range& e) {  }
     this->endInsertRows();
 }
 

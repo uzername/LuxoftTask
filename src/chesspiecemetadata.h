@@ -90,6 +90,11 @@ public:
     std::vector<ChessPiecePointPattern>::iterator getMovementPatternArrayIteratorEnd();
     std::vector<ChessPiecePointPattern>::iterator getAttackPatternArrayIterator();
     std::vector<ChessPiecePointPattern>::iterator getAttackPatternArrayIteratorEnd();
+
+    std::vector<ChessPieceVectorPattern>::iterator getVectorMovementPatternArrayIterator();
+    std::vector<ChessPieceVectorPattern>::iterator getVectorMovementPatternArrayIteratorEnd();
+    std::vector<ChessPieceVectorPattern>::iterator getVectorAttackPatternArrayIterator();
+    std::vector<ChessPieceVectorPattern>::iterator getVectorAttackPatternArrayIteratorEnd();
     /**
      * @brief performActionsAfterMovement - what actions (in code) should be performed after movement has been done.
      * it may be declared as a function ptr callback, but it's not worth it.
@@ -132,6 +137,24 @@ class RookBehavior: public ChessPieceMetadataBehavior {
 public:
     RookBehavior();
     void performActionsAfterMovement(void *ud) {    };
+    void performActionsBeforeMovement(void *ud) {   };
+};
+class BishopBehavior: public ChessPieceMetadataBehavior {
+public:
+    BishopBehavior();
+    void performActionsAfterMovement(void *ud)  {   };
+    void performActionsBeforeMovement(void *ud) {   };
+};
+class KnightBehavior: public ChessPieceMetadataBehavior {
+public:
+    KnightBehavior();
+    void performActionsAfterMovement(void *ud)  {   };
+    void performActionsBeforeMovement(void *ud) {   };
+};
+class QueenBehavior: public ChessPieceMetadataBehavior {
+public:
+    QueenBehavior();
+    void performActionsAfterMovement(void *ud)  {   };
     void performActionsBeforeMovement(void *ud) {   };
 };
 //these instances are shared across all chess pieces!
