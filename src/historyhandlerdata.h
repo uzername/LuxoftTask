@@ -34,6 +34,10 @@ protected:
     std::vector<History_SingleMovement> history_setOfMovements;
 public:
     HistoryHandlerData();
+    std::vector<History_SingleInitialStateOfFigurine>::iterator getStatesVectorIteratorBegin();
+    std::vector<History_SingleInitialStateOfFigurine>::iterator getStatesVectorIteratorEnd();
 };
+
+//extern HistoryHandlerData currentGlobalHistory;
 
 #endif // HISTORYHANDLERDATA_H

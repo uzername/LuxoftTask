@@ -4,6 +4,7 @@
 #include <QAbstractListModel>
 #include "chesspiecemetadata.h"
 #include "chesspiecemovementhandler.h"
+#include "historyhandlerdata.h"
 
 #include <memory>
 
@@ -72,6 +73,7 @@ public:
      * @param in_chessPieceMovementHandler points to an instance where finalized info about allowed movement positions should be passed
      */
     void signMovementAndAttackHandlingPact(ChessPieceMovementHandler *in_chessPieceMovementHandler);
+    void signHistoryHandlerPact(HistoryHandlerData *in_historyMegaObject);
     // add Q_INVOKABLE to display items on the field http://doc.qt.io/qt-5/qtqml-cppintegration-exposecppattributes.html
     /**
      * @brief activateDisplayAvailableMoves fills up the array of ChessPieceMovementHandler* movementInfoModel previously set by signMovementAndAttackHandlingPact
@@ -118,6 +120,7 @@ private:
     QString boardPathToImage;
     std::vector<ChessPieceOnField> allChessPiecesDisplayed;
     ChessPieceMovementHandler* movementInfoModel;
+    HistoryHandlerData* historyMegaObject;
     ChessPieceSideTypes currentMove;
     /**
      * @brief setFieldPieceBitMapVariable - used to set value of movementPerformed for some chess piece. UNUSED!

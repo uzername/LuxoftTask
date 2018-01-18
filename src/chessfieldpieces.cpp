@@ -138,6 +138,10 @@ void ChessFieldPieces::signMovementAndAttackHandlingPact(ChessPieceMovementHandl
     this->movementInfoModel = in_chessPieceMovementHandler;
 }
 
+void ChessFieldPieces::signHistoryHandlerPact(HistoryHandlerData *in_historyMegaObject) {
+    historyMegaObject = in_historyMegaObject;
+}
+
 void ChessFieldPieces::activateDisplayAvailableMoves(int in_X, int in_Y)
 {
     if (this->movementInfoModel == nullptr) {

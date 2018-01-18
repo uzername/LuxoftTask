@@ -30,10 +30,11 @@ int main(int argc, char *argv[])
       gamefieldCurrentState.setBoardPathToImage("/images/chess_board.jpg");
       gamefieldCurrentState.setCurrentMove(WHITE);
     initBehaviors();
-    fillGameField(&gamefieldCurrentState);
+    //fillGameField(&gamefieldCurrentState);
 
     ChessPieceMovementHandler gamefieldMovementHandler(QString("/images/movement.svg"), QString("/images/attack.svg"));
     JSON_HandlerInterface JSONprocessorInstance_SomeName;
+    HistoryHandlerData* currentGlobalHistory = new HistoryHandlerData();
     /*
     ChessPieceMovementHandler gamefieldMovementHandler;
     gamefieldMovementHandler.setPathToAttackImage(QString("/images/attack.svg"));
@@ -41,7 +42,8 @@ int main(int argc, char *argv[])
     */
     //  gamefieldMovementHandlerPtr = (&gamefieldMovementHandler);
     gamefieldCurrentState.signMovementAndAttackHandlingPact(&gamefieldMovementHandler);
-
+    gamefieldCurrentState.signHistoryHandlerPact(currentGlobalHistory);
+    JSONprocessorInstance_SomeName.signHistoryReadWritePact(currentGlobalHistory);
     QQmlApplicationEngine engine;
     //engine.rootContext()->setContextProperty("logic", &logic);
     engine.rootContext()->setContextProperty("mylogic", &gamefieldCurrentState);
@@ -53,8 +55,10 @@ int main(int argc, char *argv[])
     int exitcode = app.exec();
     //globalCleanup();
     deinitBehaviors();
+    delete currentGlobalHistory;
     return exitcode;
 }
+//moved to ChessFieldPieces
 void fillGameField(ChessFieldPieces *instGameField) {
 
 /*
