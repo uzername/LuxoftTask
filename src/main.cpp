@@ -1,6 +1,8 @@
 //#include "logic.h"
 #include "chessfieldpieces.h"
 #include "chesspiecemovementhandler.h"
+#include "json_handlerinterface.h"
+
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -31,6 +33,7 @@ int main(int argc, char *argv[])
     fillGameField(&gamefieldCurrentState);
 
     ChessPieceMovementHandler gamefieldMovementHandler(QString("/images/movement.svg"), QString("/images/attack.svg"));
+    JSON_HandlerInterface JSONprocessorInstance_SomeName;
     /*
     ChessPieceMovementHandler gamefieldMovementHandler;
     gamefieldMovementHandler.setPathToAttackImage(QString("/images/attack.svg"));
@@ -43,6 +46,7 @@ int main(int argc, char *argv[])
     //engine.rootContext()->setContextProperty("logic", &logic);
     engine.rootContext()->setContextProperty("mylogic", &gamefieldCurrentState);
     engine.rootContext()->setContextProperty("mvatklogic", &gamefieldMovementHandler);
+    engine.rootContext()->setContextProperty("JSON_QML_Interface", &JSONprocessorInstance_SomeName);
 
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 

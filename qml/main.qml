@@ -227,7 +227,7 @@ ApplicationWindow {
        text:"Save"
        visible:false;
        onClicked: {
-
+            JSON_QML_Interface.runRecording();
        }
 
     }

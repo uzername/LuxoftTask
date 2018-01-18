@@ -9,7 +9,9 @@ SOURCES += src/main.cpp \
     src/logic.cpp \
     src/chesspiecemetadata.cpp \
     src/chessfieldpieces.cpp \
-    src/chesspiecemovementhandler.cpp
+    src/chesspiecemovementhandler.cpp \
+    src/historyhandlerdata.cpp \
+    src/json_handlerinterface.cpp
 
 RESOURCES += qml.qrc
 
@@ -22,4 +24,6 @@ HEADERS += \
     src/chessfieldpieces.h \
     src/chesspiecemovementhandler.h \
     src/mymodelroles.h \
-    src/moredefs.h
+    src/moredefs.h \
+    src/historyhandlerdata.h \
+    src/json_handlerinterface.h

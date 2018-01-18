@@ -171,11 +171,19 @@ KnightBehavior::KnightBehavior()
     this->currentPointMovementPattern.push_back(ChessPiecePointPattern(-1,-2) );
     this->currentPointMovementPattern.push_back(ChessPiecePointPattern(1,2)   );
     this->currentPointMovementPattern.push_back(ChessPiecePointPattern(-1,2)  );
+    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(-2,1)  );
+    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(-2,-1) );
+    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(2,1)   );
+    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(2,-1)  );
 
-    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(1,-2)  );
-    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(-1,-2) );
-    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(1,2)   );
-    this->currentPointMovementPattern.push_back(ChessPiecePointPattern(-1,2)  );
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(1,-2)  );
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(-1,-2) );
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(1,2)   );
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(-1,2)  );
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(-2,1)  );
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(-2,-1) );
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(2,1)   );
+    this->currentPointAttackPattern.push_back(ChessPiecePointPattern(2,-1)  );
 }
 QueenBehavior::QueenBehavior()
     :ChessPieceMetadataBehavior() {

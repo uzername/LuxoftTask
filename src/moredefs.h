@@ -6,4 +6,5 @@
 #define BM_gotpieceFarNorthorFarSouth ((uint8_t)4)  /*0b00000100*/
 #define BM_positionclean ((uint8_t)7)               /*0b00000111*/
 
+
 #endif // MOREDEFS_H

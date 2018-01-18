@@ -288,16 +288,14 @@ void ChessFieldPieces::activateDisplayAvailableMoves(int in_X, int in_Y)
                     break;
                 }
             }
-                int tmpmvAtkPositionX = in_X+dx; int tmpmvAtkPositionY = in_Y+dy;
+                int tmpmvAtkPositionX = in_X; int tmpmvAtkPositionY = in_Y;
                 ChessPieceOnField* collisionFigurine = this->findByPosition(tmpmvAtkPositionX, tmpmvAtkPositionY);
-                while ((collisionFigurine==nullptr)&&(tmpmvAtkPositionX>=0)&&(tmpmvAtkPositionY>=0)&&(tmpmvAtkPositionX<=this->boardSize()-1)&&(tmpmvAtkPositionY<=this->boardSize()-1)) {
-
-                    collisionFigurine = this->findByPosition(tmpmvAtkPositionX, tmpmvAtkPositionY);
+                do {
                     tmpmvAtkPositionX+=dx; tmpmvAtkPositionY+=dy;
-                }
+                    collisionFigurine = this->findByPosition(tmpmvAtkPositionX, tmpmvAtkPositionY);
+                } while ((collisionFigurine==nullptr)&&(tmpmvAtkPositionX>=0)&&(tmpmvAtkPositionY>=0)&&(tmpmvAtkPositionX<=this->boardSize()-1)&&(tmpmvAtkPositionY<=this->boardSize()-1));
                 if (collisionFigurine!=nullptr) {
                     if (collisionFigurine->getCurrentSideType()!=instChessPiece->getCurrentSideType()) {
-                    tmpmvAtkPositionX-=dx; tmpmvAtkPositionY-=dy;
                     theSingleStructure.mvAtkPositionX = tmpmvAtkPositionX;
                     theSingleStructure.mvAtkPositionY = tmpmvAtkPositionY;
                     theSingleStructure.mvAtkCurrentType = ATTACK_TYPE;
@@ -515,8 +513,7 @@ ChessIntegerCoordType ChessPieceOnField::getCurrentXonField() const
     return currentXonField;
 }
 
-void ChessPieceOnField::setCurrentXonField(const ChessIntegerCoordType &value)
-{
+void ChessPieceOnField::setCurrentXonField(const ChessIntegerCoordType &value) {
     currentXonField = value;
 }
 
