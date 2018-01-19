@@ -409,95 +409,169 @@ int ChessFieldPieces::move(int fromX, int fromY, int toX, int toY) {
 void ChessFieldPieces::fillGameField() {
     unsigned numberOfItemsToInsert = 18;
     this->beginInsertRows(QModelIndex(),0,numberOfItemsToInsert-1);
+    History_SingleInitialStateOfFigurine initialStateToBeAdded;
     try {
     ChessPieceOnField whitePawn = ChessPieceOnField(globalBehaviorCollection.at(WHITE_PAWN_TYPE), "/images/white_pawn.svg");
     whitePawn.setCurrentXonField(0); whitePawn.setCurrentYonField(6); whitePawn.setCurrentSideType(WHITE);
     this->appendPieceOnField(whitePawn);
+        initialStateToBeAdded.BehaviorType = WHITE_PAWN_TYPE; initialStateToBeAdded.SideType = WHITE;
+        initialStateToBeAdded.PathToImage = "/images/white_pawn.svg";
+        initialStateToBeAdded.XcoordOnField = 0; initialStateToBeAdded.YcoordOnField = 6;
+        this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
     ChessPieceOnField whiteKing = ChessPieceOnField(globalBehaviorCollection.at(KING_TYPE) , "/images/white_king.svg");
     whiteKing.setCurrentXonField(4); whiteKing.setCurrentYonField(7); whiteKing.setCurrentSideType(WHITE);
     this->appendPieceOnField(whiteKing);
+        initialStateToBeAdded.BehaviorType = KING_TYPE; initialStateToBeAdded.SideType = WHITE;
+        initialStateToBeAdded.PathToImage = "/images/white_king.svg";
+        initialStateToBeAdded.XcoordOnField = 4; initialStateToBeAdded.YcoordOnField = 7;
+        this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try{
     ChessPieceOnField whiteRook1 = ChessPieceOnField(globalBehaviorCollection.at(ROOK_TYPE), "/images/white_rook.svg");
     whiteRook1.setCurrentXonField(0); whiteRook1.setCurrentYonField(7); whiteRook1.setCurrentSideType(WHITE);
     this->appendPieceOnField(whiteRook1);
+        initialStateToBeAdded.BehaviorType = ROOK_TYPE; initialStateToBeAdded.SideType = WHITE;
+        initialStateToBeAdded.PathToImage = "/images/white_rook.svg";
+        initialStateToBeAdded.XcoordOnField = 0; initialStateToBeAdded.YcoordOnField = 7;
+        this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
     ChessPieceOnField whiteRook2 = ChessPieceOnField(globalBehaviorCollection.at(ROOK_TYPE), "/images/white_rook.svg");
     whiteRook2.setCurrentXonField(7); whiteRook2.setCurrentYonField(7); whiteRook2.setCurrentSideType(WHITE);
     this->appendPieceOnField(whiteRook2);
+        initialStateToBeAdded.BehaviorType = ROOK_TYPE; initialStateToBeAdded.SideType = WHITE;
+        initialStateToBeAdded.PathToImage = "/images/white_rook.svg";
+        initialStateToBeAdded.XcoordOnField = 7; initialStateToBeAdded.YcoordOnField = 7;
+        this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
     ChessPieceOnField whiteBishop1 = ChessPieceOnField(globalBehaviorCollection.at(BISHOP_TYPE), "/images/white_bishop.svg");
     whiteBishop1.setCurrentXonField(2); whiteBishop1.setCurrentYonField(7); whiteBishop1.setCurrentSideType(WHITE);
     this->appendPieceOnField(whiteBishop1);
+        initialStateToBeAdded.BehaviorType = BISHOP_TYPE; initialStateToBeAdded.SideType = WHITE;
+        initialStateToBeAdded.PathToImage = "/images/white_bishop.svg";
+        initialStateToBeAdded.XcoordOnField = 2; initialStateToBeAdded.YcoordOnField = 7;
+        this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
     ChessPieceOnField whiteBishop2 = ChessPieceOnField(globalBehaviorCollection.at(BISHOP_TYPE), "/images/white_bishop.svg");
     whiteBishop2.setCurrentXonField(5); whiteBishop2.setCurrentYonField(7); whiteBishop2.setCurrentSideType(WHITE);
     this->appendPieceOnField(whiteBishop2);
+        initialStateToBeAdded.BehaviorType = BISHOP_TYPE; initialStateToBeAdded.SideType = WHITE;
+        initialStateToBeAdded.PathToImage = "/images/white_bishop.svg";
+        initialStateToBeAdded.XcoordOnField = 5; initialStateToBeAdded.YcoordOnField = 7;
+        this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
         ChessPieceOnField whiteKnight1 = ChessPieceOnField(globalBehaviorCollection.at(KNIGHT_TYPE), "/images/white_knight.svg");
         whiteKnight1.setCurrentXonField(6); whiteKnight1.setCurrentYonField(7); whiteKnight1.setCurrentSideType(WHITE);
         this->appendPieceOnField(whiteKnight1);
+            initialStateToBeAdded.BehaviorType = KNIGHT_TYPE; initialStateToBeAdded.SideType = WHITE;
+            initialStateToBeAdded.PathToImage = "/images/white_knight.svg";
+            initialStateToBeAdded.XcoordOnField = 6; initialStateToBeAdded.YcoordOnField = 7;
+            this->historyMegaObject->addInitialState(initialStateToBeAdded);
+
     } catch (std::out_of_range& e) {  }
     try {
         ChessPieceOnField whiteKnight2 = ChessPieceOnField(globalBehaviorCollection.at(KNIGHT_TYPE), "/images/white_knight.svg");
         whiteKnight2.setCurrentXonField(1); whiteKnight2.setCurrentYonField(7); whiteKnight2.setCurrentSideType(WHITE);
         this->appendPieceOnField(whiteKnight2);
+            initialStateToBeAdded.BehaviorType = KNIGHT_TYPE; initialStateToBeAdded.SideType = WHITE;
+            initialStateToBeAdded.PathToImage = "/images/white_knight.svg";
+            initialStateToBeAdded.XcoordOnField = 1; initialStateToBeAdded.YcoordOnField = 7;
+            this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
         ChessPieceOnField whiteQueen = ChessPieceOnField(globalBehaviorCollection.at(QUEEN_TYPE), "/images/white_queen.svg");
         whiteQueen.setCurrentXonField(3); whiteQueen.setCurrentYonField(7); whiteQueen.setCurrentSideType(WHITE);
         this->appendPieceOnField(whiteQueen);
+            initialStateToBeAdded.BehaviorType = QUEEN_TYPE; initialStateToBeAdded.SideType = WHITE;
+            initialStateToBeAdded.PathToImage = "/images/white_queen.svg";
+            initialStateToBeAdded.XcoordOnField = 3; initialStateToBeAdded.YcoordOnField = 7;
+            this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
     ChessPieceOnField blackPawn = ChessPieceOnField(globalBehaviorCollection.at(BLACK_PAWN_TYPE), "/images/black_pawn.svg");
     blackPawn.setCurrentXonField(0); blackPawn.setCurrentYonField(1); blackPawn.setCurrentSideType(BLACK);
     this->appendPieceOnField(blackPawn);
+        initialStateToBeAdded.BehaviorType = BLACK_PAWN_TYPE; initialStateToBeAdded.SideType = BLACK;
+        initialStateToBeAdded.PathToImage = "/images/black_pawn.svg";
+        initialStateToBeAdded.XcoordOnField = 0; initialStateToBeAdded.YcoordOnField = 1;
+        this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
     ChessPieceOnField blackKing = ChessPieceOnField(globalBehaviorCollection.at(KING_TYPE), "/images/black_king.svg");
     blackKing.setCurrentXonField(4); blackKing.setCurrentYonField(0); blackKing.setCurrentSideType(BLACK);
     this->appendPieceOnField(blackKing);
+        initialStateToBeAdded.BehaviorType = KING_TYPE; initialStateToBeAdded.SideType = BLACK;
+        initialStateToBeAdded.PathToImage = "/images/black_king.svg";
+        initialStateToBeAdded.XcoordOnField = 4; initialStateToBeAdded.YcoordOnField = 0;
+        this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
     ChessPieceOnField blackRook1 = ChessPieceOnField(globalBehaviorCollection.at(ROOK_TYPE), "/images/black_rook.svg");
     blackRook1.setCurrentXonField(0); blackRook1.setCurrentYonField(0); blackRook1.setCurrentSideType(BLACK);
     this->appendPieceOnField(blackRook1);
+        initialStateToBeAdded.BehaviorType = ROOK_TYPE; initialStateToBeAdded.SideType = BLACK;
+        initialStateToBeAdded.PathToImage = "/images/black_rook.svg";
+        initialStateToBeAdded.XcoordOnField = 0; initialStateToBeAdded.YcoordOnField = 0;
+        this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
     ChessPieceOnField blackRook2 = ChessPieceOnField(globalBehaviorCollection.at(ROOK_TYPE), "/images/black_rook.svg");
     blackRook2.setCurrentXonField(7); blackRook2.setCurrentYonField(0); blackRook2.setCurrentSideType(BLACK);
     this->appendPieceOnField(blackRook2);
+        initialStateToBeAdded.BehaviorType = ROOK_TYPE; initialStateToBeAdded.SideType = BLACK;
+        initialStateToBeAdded.PathToImage = "/images/black_rook.svg";
+        initialStateToBeAdded.XcoordOnField = 7; initialStateToBeAdded.YcoordOnField = 0;
+        this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
     ChessPieceOnField blackBishop1 = ChessPieceOnField(globalBehaviorCollection.at(BISHOP_TYPE), "/images/black_bishop.svg");
     blackBishop1.setCurrentXonField(2); blackBishop1.setCurrentYonField(0); blackBishop1.setCurrentSideType(BLACK);
     this->appendPieceOnField(blackBishop1);
+        initialStateToBeAdded.BehaviorType = BISHOP_TYPE; initialStateToBeAdded.SideType = BLACK;
+        initialStateToBeAdded.PathToImage = "/images/black_bishop.svg";
+        initialStateToBeAdded.XcoordOnField = 2; initialStateToBeAdded.YcoordOnField = 0;
+        this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
     ChessPieceOnField blackBishop2 = ChessPieceOnField(globalBehaviorCollection.at(BISHOP_TYPE), "/images/black_bishop.svg");
     blackBishop2.setCurrentXonField(5); blackBishop2.setCurrentYonField(0); blackBishop2.setCurrentSideType(BLACK);
     this->appendPieceOnField(blackBishop2);
+        initialStateToBeAdded.BehaviorType = BISHOP_TYPE; initialStateToBeAdded.SideType = BLACK;
+        initialStateToBeAdded.PathToImage = "/images/black_bishop.svg";
+        initialStateToBeAdded.XcoordOnField = 5; initialStateToBeAdded.YcoordOnField = 0;
+        this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
         ChessPieceOnField blackKnight1 = ChessPieceOnField(globalBehaviorCollection.at(KNIGHT_TYPE), "/images/black_knight.svg");
         blackKnight1.setCurrentXonField(6); blackKnight1.setCurrentYonField(0); blackKnight1.setCurrentSideType(BLACK);
         this->appendPieceOnField(blackKnight1);
+            initialStateToBeAdded.BehaviorType = KNIGHT_TYPE; initialStateToBeAdded.SideType = BLACK;
+            initialStateToBeAdded.PathToImage = "/images/black_knight.svg";
+            initialStateToBeAdded.XcoordOnField = 6; initialStateToBeAdded.YcoordOnField = 0;
+            this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
         ChessPieceOnField blackKnight2 = ChessPieceOnField(globalBehaviorCollection.at(KNIGHT_TYPE), "/images/black_knight.svg");
         blackKnight2.setCurrentXonField(1); blackKnight2.setCurrentYonField(0); blackKnight2.setCurrentSideType(BLACK);
         this->appendPieceOnField(blackKnight2);
+            initialStateToBeAdded.BehaviorType = KNIGHT_TYPE; initialStateToBeAdded.SideType = BLACK;
+            initialStateToBeAdded.PathToImage = "/images/black_knight.svg";
+            initialStateToBeAdded.XcoordOnField = 1; initialStateToBeAdded.YcoordOnField = 0;
+            this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     try {
         ChessPieceOnField blackQueen = ChessPieceOnField(globalBehaviorCollection.at(QUEEN_TYPE), "/images/black_queen.svg");
         blackQueen.setCurrentXonField(3); blackQueen.setCurrentYonField(0); blackQueen.setCurrentSideType(BLACK);
         this->appendPieceOnField(blackQueen);
+            initialStateToBeAdded.BehaviorType = QUEEN_TYPE; initialStateToBeAdded.SideType = BLACK;
+            initialStateToBeAdded.PathToImage = "/images/black_queen.svg";
+            initialStateToBeAdded.XcoordOnField = 3; initialStateToBeAdded.YcoordOnField = 0;
+            this->historyMegaObject->addInitialState(initialStateToBeAdded);
     } catch (std::out_of_range& e) {  }
     this->endInsertRows();
 }

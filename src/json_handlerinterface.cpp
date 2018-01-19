@@ -24,10 +24,28 @@ void JSON_HandlerInterface::recordAllHistoryDataToFile(std::__cxx11::string in_p
     writer.String("ChessData");
     writer.Key("TimeStamp");
     writer.String(currentDateTime().c_str());
-    if (this->historySameData == nullptr) {return;}
+    if (this->historySameData == nullptr) {writer.EndObject(); fclose(fp); return;}
+    writer.Key("h_iCPP");
     writer.StartArray();
-        for (it=this->historySameData->getStatesVectorIteratorBegin(); it!=this->historySameData->getStatesVectorIteratorEnd(); it++) {
-
+        for (std::vector<History_SingleInitialStateOfFigurine>::iterator it=this->historySameData->getStatesVectorIteratorBegin(); it!=this->historySameData->getStatesVectorIteratorEnd(); it++) {
+            writer.StartObject();
+            writer.Key("XCOF"); writer.Int(it->XcoordOnField);
+            writer.Key("YCOF"); writer.Int(it->YcoordOnField);
+            writer.Key("BT"); writer.Int(it->BehaviorType);
+            writer.Key("PTI"); writer.String(it->PathToImage.c_str());
+            writer.Key("ST"); writer.Int(it->SideType);
+            writer.EndObject();
+        }
+    writer.EndArray();
+    writer.Key("h_sOM");
+    writer.StartArray();
+        for (std::vector<History_SingleMovement>::iterator it=this->historySameData->getMovementsVectorIteratorBegin(); it!=this->historySameData->getMovementsVectorIteratorBegin(); it++) {
+            writer.StartObject();
+            writer.Key("uIOF"); writer.Int(it->uniqueIndexOfFigurine);
+            writer.Key("sX"); writer.Int(it->startX); writer.Key("eX");  writer.Int(it->endX);
+            writer.Key("sY"); writer.Int(it->startY); writer.Key("eY");  writer.Int(it->endY);
+            writer.Key("cP"); writer.Int(it->capturePerformed);
+            writer.EndObject();
         }
     writer.EndArray();
     writer.EndObject();

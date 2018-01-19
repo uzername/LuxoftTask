@@ -29,6 +29,10 @@ protected:
     uint8_t movementPerformed;
 
     ChessPieceSideTypes currentSideType;
+    /**
+     * @brief uniqueId is a number used to identify this chess piece in history and process it accordingly
+     */
+    uint16_t uniqueId;
 public:
     ChessPieceOnField(ChessPieceMetadataBehavior* in_Behavior, std::string in_pathToImage);
     std::string getPathToImage() const;

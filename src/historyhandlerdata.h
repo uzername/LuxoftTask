@@ -36,6 +36,9 @@ public:
     HistoryHandlerData();
     std::vector<History_SingleInitialStateOfFigurine>::iterator getStatesVectorIteratorBegin();
     std::vector<History_SingleInitialStateOfFigurine>::iterator getStatesVectorIteratorEnd();
+    void addInitialState(History_SingleInitialStateOfFigurine in_state);
+    std::vector<History_SingleMovement>::iterator getMovementsVectorIteratorBegin();
+    std::vector<History_SingleMovement>::iterator getMovementsVectorIteratorEnd();
 };
 
 //extern HistoryHandlerData currentGlobalHistory;
