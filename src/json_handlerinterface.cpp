@@ -34,17 +34,18 @@ void JSON_HandlerInterface::recordAllHistoryDataToFile(std::__cxx11::string in_p
             writer.Key("BT"); writer.Int(it->BehaviorType);
             writer.Key("PTI"); writer.String(it->PathToImage.c_str());
             writer.Key("ST"); writer.Int(it->SideType);
+            writer.Key("uIOF1"); writer.Int(it->uniqueIndexOfFigurine);
             writer.EndObject();
         }
     writer.EndArray();
     writer.Key("h_sOM");
     writer.StartArray();
-        for (std::vector<History_SingleMovement>::iterator it=this->historySameData->getMovementsVectorIteratorBegin(); it!=this->historySameData->getMovementsVectorIteratorBegin(); it++) {
+        for (std::vector<History_SingleMovement>::iterator it=this->historySameData->getMovementsVectorIteratorBegin(); it!=this->historySameData->getMovementsVectorIteratorEnd(); it++) {
             writer.StartObject();
             writer.Key("uIOF"); writer.Int(it->uniqueIndexOfFigurine);
             writer.Key("sX"); writer.Int(it->startX); writer.Key("eX");  writer.Int(it->endX);
             writer.Key("sY"); writer.Int(it->startY); writer.Key("eY");  writer.Int(it->endY);
-            writer.Key("cP"); writer.Int(it->capturePerformed);
+            writer.Key("cP"); writer.Int(it->capturePerformed); writer.Key("cUI"); writer.Int(it->capturedUniqueIndex);
             writer.EndObject();
         }
     writer.EndArray();

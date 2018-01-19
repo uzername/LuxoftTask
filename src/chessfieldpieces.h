@@ -47,6 +47,8 @@ public:
     uint8_t* getMovementPerformed();
     ChessPieceSideTypes getCurrentSideType() const;
     void setCurrentSideType(const ChessPieceSideTypes &value);
+    uint16_t getUniqueId() const;
+    void setUniqueId(const uint16_t &value);
 };
 /**
  * @brief The ChessFieldPieces class reflects upon the gamefield and lies close to display.
@@ -104,6 +106,9 @@ public:
       * @returns 0 if movement inavailable; 1 if movement may be performed; 2 if error happened
       */
     Q_INVOKABLE int move(int fromX, int fromY, int toX, int toY);
+    /**
+      * this cleans the gamefield
+      */
     Q_INVOKABLE void fillGameField();
     Q_INVOKABLE void clearGameField();
     ChessPieceSideTypes getCurrentMove() const;

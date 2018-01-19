@@ -24,4 +24,13 @@ std::vector<History_SingleMovement>::iterator HistoryHandlerData::getMovementsVe
     return this->history_setOfMovements.end();
 }
 
+void HistoryHandlerData::addSingleMovement(History_SingleMovement in_SingleMovement) {
+    this->history_setOfMovements.push_back(in_SingleMovement);
+}
+
+void HistoryHandlerData::quickCleanupAllHistory() {
+    this->history_initialChessPiecesPositions.clear();
+    this->history_setOfMovements.clear();
+}
+
 //HistoryHandlerData currentGlobalHistory;

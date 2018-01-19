@@ -12,11 +12,14 @@ typedef struct History_SingleInitialStateOfFigurine {
     ChessPieceBehaviorTypes BehaviorType;
     std::string PathToImage;
     ChessPieceSideTypes SideType;
+    uint16_t uniqueIndexOfFigurine;
 } History_SingleInitialStateOfFigurine;
 /**
   * a single movement in history.
   * @see https://en.wikipedia.org/wiki/Algebraic_notation_(chess)
   */
+//unique index of figurine equals to the index of figurine in history_initialChessPiecesPositions vector.
+//elements are not removed from it during gameplay
 typedef struct History_SingleMovement {
     uint16_t uniqueIndexOfFigurine;
     ChessIntegerCoordType startX;
@@ -24,6 +27,7 @@ typedef struct History_SingleMovement {
     ChessIntegerCoordType endX;
     ChessIntegerCoordType endY;
     uint8_t capturePerformed;
+    uint16_t capturedUniqueIndex;
 } History_SingleMovement;
 /**
  * @brief The HistoryHandlerData class is used to store the current history of moves
@@ -39,6 +43,8 @@ public:
     void addInitialState(History_SingleInitialStateOfFigurine in_state);
     std::vector<History_SingleMovement>::iterator getMovementsVectorIteratorBegin();
     std::vector<History_SingleMovement>::iterator getMovementsVectorIteratorEnd();
+    void addSingleMovement(History_SingleMovement in_SingleMovement);
+    void quickCleanupAllHistory();
 };
 
 //extern HistoryHandlerData currentGlobalHistory;
