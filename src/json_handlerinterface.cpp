@@ -2,12 +2,37 @@
 #include "rapidjson/filewritestream.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/prettywriter.h"
+#include "rapidjson/reader.h"
 #include <cstdio>
 #include <time.h>
 
 using namespace rapidjson;
-JSON_HandlerInterface::JSON_HandlerInterface(): QObject() {
+// http://rapidjson.org/md_doc_sax.html#Reader
+struct MyHandler : public BaseReaderHandler<UTF8<>, MyHandler> {
+    bool Null() { return true; }
+    bool Bool(bool b) { return true; }
+    bool Int(int i) {  return true; }
+    bool Uint(unsigned u) {  return true; }
+    bool Int64(int64_t i) {  return true; }
+    bool Uint64(uint64_t u) { cout << "Uint64(" << u << ")" << endl; return true; }
+    bool Double(double d) { cout << "Double(" << d << ")" << endl; return true; }
+    bool String(const char* str, SizeType length, bool copy) {
+        cout << "String(" << str << ", " << length << ", " << boolalpha << copy << ")" << endl;
+        return true;
+    }
+    bool StartObject() { cout << "StartObject()" << endl; return true; }
+    bool Key(const char* str, SizeType length, bool copy) {
+        cout << "Key(" << str << ", " << length << ", " << boolalpha << copy << ")" << endl;
+        return true;
+    }
+    bool EndObject(SizeType memberCount) { cout << "EndObject(" << memberCount << ")" << endl; return true; }
+    bool StartArray() { cout << "StartArray()" << endl; return true; }
+    bool EndArray(SizeType elementCount) { cout << "EndArray(" << elementCount << ")" << endl; return true; }
+};
 
+
+JSON_HandlerInterface::JSON_HandlerInterface(): QObject() {
+    JSONReaderState = EXPECT_GENERALSTART;
 }
 
 void JSON_HandlerInterface::recordAllHistoryDataToFile(std::__cxx11::string in_pathToFile) {
@@ -54,12 +79,20 @@ void JSON_HandlerInterface::recordAllHistoryDataToFile(std::__cxx11::string in_p
     fclose(fp);
 }
 
+void JSON_HandlerInterface::obtainAllHistoryDataFromFile(std::__cxx11::string in_pathToFile) {
+
+}
+
 void JSON_HandlerInterface::signHistoryReadWritePact(HistoryHandlerData *in_HistoryMegaObject) {
     this->historySameData = in_HistoryMegaObject;
 }
 
 void JSON_HandlerInterface::runRecording() {
     this->recordAllHistoryDataToFile("out.json");
+}
+
+void JSON_HandlerInterface::runReading() {
+    this->obtainAllHistoryDataFromFile("in.json");
 }
 
 // https://stackoverflow.com/questions/997946/how-to-get-current-time-and-date-in-c
