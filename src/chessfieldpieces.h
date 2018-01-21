@@ -111,6 +111,7 @@ public:
       */
     Q_INVOKABLE void fillGameField();
     Q_INVOKABLE void clearGameField();
+    Q_INVOKABLE void fillGameFieldFromInitialHistory();
     ChessPieceSideTypes getCurrentMove() const;
     void setCurrentMove(const ChessPieceSideTypes &value);
     void increaseCurrentMove();

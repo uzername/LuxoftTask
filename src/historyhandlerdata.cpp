@@ -16,6 +16,10 @@ void HistoryHandlerData::addInitialState(History_SingleInitialStateOfFigurine in
     this->history_initialChessPiecesPositions.push_back(in_state);
 }
 
+uint16_t HistoryHandlerData::getSizeInitialStates() {
+    return this->history_initialChessPiecesPositions.size();
+}
+
 std::vector<History_SingleMovement>::iterator HistoryHandlerData::getMovementsVectorIteratorBegin() {
     return this->history_setOfMovements.begin();
 }

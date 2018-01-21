@@ -3,11 +3,14 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/reader.h"
+#include "rapidjson/filereadstream.h"
+#include "rapidjson/document.h"
 #include <cstdio>
 #include <time.h>
 
 using namespace rapidjson;
 // http://rapidjson.org/md_doc_sax.html#Reader
+#ifdef USE_SAXJSON_PARSER_SOMENAME
 struct MyHandler : public BaseReaderHandler<UTF8<>, MyHandler> {
     bool Null() { return true; }
     bool Bool(bool b) { return true; }
@@ -20,7 +23,7 @@ struct MyHandler : public BaseReaderHandler<UTF8<>, MyHandler> {
         cout << "String(" << str << ", " << length << ", " << boolalpha << copy << ")" << endl;
         return true;
     }
-    bool StartObject() { cout << "StartObject()" << endl; return true; }
+    bool StartObject() {  return true; }
     bool Key(const char* str, SizeType length, bool copy) {
         cout << "Key(" << str << ", " << length << ", " << boolalpha << copy << ")" << endl;
         return true;
@@ -29,10 +32,13 @@ struct MyHandler : public BaseReaderHandler<UTF8<>, MyHandler> {
     bool StartArray() { cout << "StartArray()" << endl; return true; }
     bool EndArray(SizeType elementCount) { cout << "EndArray(" << elementCount << ")" << endl; return true; }
 };
-
+#endif
 
 JSON_HandlerInterface::JSON_HandlerInterface(): QObject() {
+    currentTimeStampFromFile = "";
+    #ifdef USE_SAXJSON_PARSER_SOMENAME
     JSONReaderState = EXPECT_GENERALSTART;
+    #endif
 }
 
 void JSON_HandlerInterface::recordAllHistoryDataToFile(std::__cxx11::string in_pathToFile) {
@@ -78,9 +84,57 @@ void JSON_HandlerInterface::recordAllHistoryDataToFile(std::__cxx11::string in_p
 
     fclose(fp);
 }
-
+//http://rapidjson.org/md_doc_tutorial.html makes DOM. Not using streamed parser
 void JSON_HandlerInterface::obtainAllHistoryDataFromFile(std::__cxx11::string in_pathToFile) {
-
+    //this routine is called after clearGamefield, called in qml file. But still it would not hurt to remove all items from history.
+    //we'll be recording history from file
+        this->historySameData->quickCleanupAllHistory();
+   // printf("STARTED OBTAINING\n");
+      //QT adds unnecessary symbols to beginning, skip that
+   // const char* tmpchr = in_pathToFile.c_str()+8;
+    FILE* fp = fopen(in_pathToFile.c_str()+8, "rb"); // non-Windows use "r"
+    char readBuffer[65536];
+    FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+    Document d;
+    d.ParseStream(is);
+    assert(d.HasMember("Description"));
+    assert(d.HasMember("TimeStamp"));
+    char readTimeStampFromFile[255]; sprintf(readTimeStampFromFile, "%s", d.GetObject()["TimeStamp"].GetString());
+    this->currentTimeStampFromFile = QString(readTimeStampFromFile);
+    assert(d.HasMember("h_iCPP"));
+    const Value& h_iCPP = d["h_iCPP"];
+    assert(h_iCPP.IsArray());
+    for (Value::ConstValueIterator itr = h_iCPP.Begin(); itr != h_iCPP.End(); ++itr) {
+       //GenericObject::Object historyPiecePosition = itr->GetObject();
+        /*
+       for (Value::ConstMemberIterator itr2 = itr->GetObject().MemberBegin(); itr2 != itr->GetObject().MemberEnd(); ++itr2) {
+           printf("member %s \n", itr2->name.GetString());
+       }
+        */
+        History_SingleInitialStateOfFigurine stateToBeAdded;
+        stateToBeAdded.XcoordOnField = itr->GetObject()["XCOF"].GetInt();
+        stateToBeAdded.YcoordOnField = itr->GetObject()["YCOF"].GetInt();
+        stateToBeAdded.BehaviorType = ChessPieceBehaviorTypes( itr->GetObject()["BT"].GetInt() );
+        char readPathToImage[255]; sprintf(readPathToImage, "%s", itr->GetObject()["PTI"].GetString());
+        stateToBeAdded.PathToImage = std::string(readPathToImage); //itr->GetObject()["PTI"].GetString();
+        stateToBeAdded.SideType = ChessPieceSideTypes( itr->GetObject()["ST"].GetInt() );
+        stateToBeAdded.uniqueIndexOfFigurine = itr->GetObject()["uIOF1"].GetInt();
+        this->historySameData->addInitialState(stateToBeAdded);
+    }
+    assert(d.HasMember("h_sOM"));
+    const Value& h_sOM = d["h_sOM"];
+    assert(h_sOM.IsArray());
+    for (Value::ConstValueIterator itr = h_sOM.Begin(); itr!=h_sOM.End(); ++itr) {
+        History_SingleMovement movementToBeAdded;
+        movementToBeAdded.uniqueIndexOfFigurine = itr->GetObject()["uIOF"].GetInt();
+        movementToBeAdded.startX = itr->GetObject()["sX"].GetInt();
+        movementToBeAdded.endX = itr->GetObject()["eX"].GetInt();
+        movementToBeAdded.startY = itr->GetObject()["sY"].GetInt();
+        movementToBeAdded.endY = itr->GetObject()["eY"].GetInt();
+        movementToBeAdded.capturePerformed = itr->GetObject()["cP"].GetInt();
+        this->historySameData->addSingleMovement(movementToBeAdded);
+    }
+    fclose(fp);
 }
 
 void JSON_HandlerInterface::signHistoryReadWritePact(HistoryHandlerData *in_HistoryMegaObject) {
@@ -91,8 +145,8 @@ void JSON_HandlerInterface::runRecording() {
     this->recordAllHistoryDataToFile("out.json");
 }
 
-void JSON_HandlerInterface::runReading() {
-    this->obtainAllHistoryDataFromFile("in.json");
+void JSON_HandlerInterface::runReading(QString in_filepath) {
+    this->obtainAllHistoryDataFromFile(in_filepath.toStdString());
 }
 
 // https://stackoverflow.com/questions/997946/how-to-get-current-time-and-date-in-c
@@ -107,4 +161,9 @@ const std::string JSON_HandlerInterface::currentDateTime() {
     strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
 
     return buf;
+}
+
+QString JSON_HandlerInterface::getCurrentTimeStampFromFile() const
+{
+    return currentTimeStampFromFile;
 }

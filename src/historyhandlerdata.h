@@ -41,6 +41,7 @@ public:
     std::vector<History_SingleInitialStateOfFigurine>::iterator getStatesVectorIteratorBegin();
     std::vector<History_SingleInitialStateOfFigurine>::iterator getStatesVectorIteratorEnd();
     void addInitialState(History_SingleInitialStateOfFigurine in_state);
+    uint16_t getSizeInitialStates();
     std::vector<History_SingleMovement>::iterator getMovementsVectorIteratorBegin();
     std::vector<History_SingleMovement>::iterator getMovementsVectorIteratorEnd();
     void addSingleMovement(History_SingleMovement in_SingleMovement);

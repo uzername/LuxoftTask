@@ -4,11 +4,14 @@ import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
 ApplicationWindow {
+    id: mainWndChess
     title: qsTr("Chess")
     visible: true
     width: 800
     height: 600
     property int squareSize: 70
+    property string currentTitleWindow: "Chess || Loaded story : %1"
+    property string basicTitleWindow: "Chess"
     //Use that somewhere else, but not here
 /*
     property var images: [
@@ -16,7 +19,34 @@ ApplicationWindow {
       {'imgPath' : "/images/black_pawn.svg"},
     ]
 */
+    // there is a nasty bug in file dialog:
+    // https://bugreports.qt.io/browse/QTBUG-53707?page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel&showAll=true
+    // should update to latest version
+    FileDialog {
+        id:openHistoryFileDialog
+        title: qsTr("A file to read from")
+        property bool dialogHasBeenCancelled: true
+        nameFilters: [ "ChessData files (*.json)" ]
+        folder:shortcuts.home
+        onAccepted: {
+            dialogHasBeenCancelled = false;
+            console.log("You chose: " + openHistoryFileDialog.fileUrl.toString())
 
+            if (openHistoryFileDialog.dialogHasBeenCancelled == false) {
+                console.log("!!!");
+                mylogic.clearGameField();
+                JSON_QML_Interface.runReading(openHistoryFileDialog.fileUrl.toString());
+                currentTitleWindow = currentTitleWindow.arg(JSON_QML_Interface.getCurrentTimeStampFromFile());
+                mylogic.fillGameFieldFromInitialHistory();
+                screenSwitchingGnome.state = "screen3"
+            }
+
+        }
+        onRejected: {
+            dialogHasBeenCancelled = true;
+            console.log("Canceled")
+        }
+    }
     StateGroup {
         //this gnome switches the screens and buttons. He stands over here
     id: screenSwitchingGnome
@@ -30,6 +60,7 @@ ApplicationWindow {
                 PropertyChanges { target: saveButton; visible: false  }
                 PropertyChanges { target: loadButton; visible: true   }
                 PropertyChanges { target: prevAndNext; visible: false }
+                PropertyChanges { target: mainWndChess; title: qsTr(basicTitleWindow) }
             },
             State {
                 name: "screen2"
@@ -38,6 +69,7 @@ ApplicationWindow {
                 PropertyChanges { target: saveButton;  visible: true   }
                 PropertyChanges { target: loadButton;  visible: false  }
                 PropertyChanges { target: prevAndNext; visible: false  }
+                PropertyChanges { target: mainWndChess; title: qsTr(basicTitleWindow) }
             },
             State {
                 name: "screen3"
@@ -46,6 +78,7 @@ ApplicationWindow {
                 PropertyChanges { target: saveButton;  visible: false }
                 PropertyChanges { target: loadButton;  visible: true  }
                 PropertyChanges { target: prevAndNext; visible: true  }
+                PropertyChanges { target: mainWndChess;  title: qsTr(currentTitleWindow) }
             }
         ]
     }
@@ -214,8 +247,19 @@ ApplicationWindow {
 
        onClicked: {
           if ((screenSwitchingGnome.state == "")||(screenSwitchingGnome.state == "screen1")||(screenSwitchingGnome.state == "screen3")) {
-              screenSwitchingGnome.state = "screen3"
+              openHistoryFileDialog.folder="";
+              openHistoryFileDialog.open();
+/*              if (openHistoryFileDialog.dialogHasBeenCancelled == false) {
+                  console.log("!!!");
+                  mylogic.clearGameField();
+                  JSON_QML_Interface.runReading(openHistoryFileDialog.fileUrl.toString());
+                  currentTitleWindow = currentTitleWindow.arg(JSON_QML_Interface.getCurrentTimeStampFromFile());
+                  mylogic.fillGameFieldFromInitialHistory();
+
+                  screenSwitchingGnome.state = "screen3"
+              }*/
           }
+
        }
 
     }

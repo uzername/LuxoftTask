@@ -628,9 +628,25 @@ void ChessFieldPieces::fillGameField() {
 void ChessFieldPieces::clearGameField() {
         this->historyMegaObject->quickCleanupAllHistory();
     unsigned numberOfItemsToRemove = this->allChessPiecesDisplayed.size();
+    if (numberOfItemsToRemove == 0) return;
     this->beginRemoveRows(QModelIndex(),0,numberOfItemsToRemove-1);
     this->allChessPiecesDisplayed.clear();
     this->endRemoveRows();
+}
+
+void ChessFieldPieces::fillGameFieldFromInitialHistory() {
+    if (this->historyMegaObject == nullptr) {
+        return;
+    }
+    unsigned numberOfItemsToInsert = this->historyMegaObject->getSizeInitialStates();
+    this->beginInsertRows(QModelIndex(),0,numberOfItemsToInsert-1);
+    for (std::vector<History_SingleInitialStateOfFigurine>::iterator itr = this->historyMegaObject->getStatesVectorIteratorBegin(); itr!=this->historyMegaObject->getStatesVectorIteratorEnd(); itr++) {
+            ChessPieceOnField PieceTobeAdded = ChessPieceOnField(globalBehaviorCollection.at(itr->BehaviorType), itr->PathToImage);
+            PieceTobeAdded.setCurrentXonField(itr->XcoordOnField); PieceTobeAdded.setCurrentYonField(itr->YcoordOnField);
+            PieceTobeAdded.setCurrentSideType(itr->SideType); PieceTobeAdded.setUniqueId(itr->uniqueIndexOfFigurine);
+            this->appendPieceOnField(PieceTobeAdded);
+    }
+    this->endInsertRows();
 }
 void ChessFieldPieces::appendPieceOnField(ChessPieceOnField pieceToAppend) {
     this->allChessPiecesDisplayed.push_back(pieceToAppend);
