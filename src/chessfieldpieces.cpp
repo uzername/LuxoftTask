@@ -388,6 +388,9 @@ int ChessFieldPieces::move(int fromX, int fromY, int toX, int toY) {
                     initialChessPiece->setCurrentYonField(toY);
                     //this->movementInfoModel->removeItemByIndex(rivalChessPieceIndex);
 
+                    movementInHistory.capturePerformed = 1;
+                    movementInHistory.capturedUniqueIndex = possibleRivalChessPiece->getUniqueId();
+
                     this->beginRemoveRows(QModelIndex(),rivalChessPieceIndex,rivalChessPieceIndex);
                     this->allChessPiecesDisplayed.erase(this->allChessPiecesDisplayed.begin()+rivalChessPieceIndex);
                     this->endRemoveRows();
@@ -399,8 +402,7 @@ int ChessFieldPieces::move(int fromX, int fromY, int toX, int toY) {
                     initialChessPiece->getInstBehaviorChessPiece()->performActionsAfterMovement( (void*)(initialChessPiece->getMovementPerformed() ) );
                     this->increaseCurrentMove();
                     //endResetModel();
-                    movementInHistory.capturePerformed = 1;
-                    movementInHistory.capturedUniqueIndex = possibleRivalChessPiece->getUniqueId();
+
                 } else {
                     return 2;
                 }
@@ -520,6 +522,7 @@ void ChessFieldPieces::fillGameField() {
     try {
         ChessPieceOnField whiteKnight2 = ChessPieceOnField(globalBehaviorCollection.at(KNIGHT_TYPE), "/images/white_knight.svg");
         whiteKnight2.setCurrentXonField(1); whiteKnight2.setCurrentYonField(7); whiteKnight2.setCurrentSideType(WHITE);
+        whiteKnight2.setUniqueId(uniqueIdIndex); uniqueIdIndex++;
         this->appendPieceOnField(whiteKnight2);
             initialStateToBeAdded.BehaviorType = KNIGHT_TYPE; initialStateToBeAdded.SideType = WHITE;
             initialStateToBeAdded.PathToImage = "/images/white_knight.svg";
@@ -666,15 +669,19 @@ void ChessFieldPieces::fillGameFieldFromInitialHistory() {
 }
 
 unsigned ChessFieldPieces::nextMoveHistory() {
+    uint16_t valueStep0 = this->historyMegaObject->getCurrentDisplayedMove();
     uint16_t valueStep = this->historyMegaObject->nextMoveStep();
+    if (valueStep == valueStep0) {return valueStep;}
+
     History_SingleMovement* obtainedMovement = this->historyMegaObject->getcurrentMovementPtrByCurrentIndex();
     if (obtainedMovement == nullptr) return valueStep;
 
     unsigned int initialChessPieceIndex; unsigned int rivalChessPieceIndex;
     ChessPieceOnField* initialChessPiece; ChessPieceOnField* rivalChessPiece;
+    initialChessPiece = this->findByPosition(obtainedMovement->startX, obtainedMovement->startY, &initialChessPieceIndex);
     if (obtainedMovement->capturePerformed==0) {
 
-    initialChessPiece = this->findByPosition(obtainedMovement->startX, obtainedMovement->startY, &initialChessPieceIndex);
+    //initialChessPiece = this->findByPosition(obtainedMovement->startX, obtainedMovement->startY, &initialChessPieceIndex);
         //there may be (on rare occasions) some collision: a figurine may be on position, but our data from file indicate that there was no capture
         //TODO: handle this
         initialChessPiece->setCurrentXonField(obtainedMovement->endX);
@@ -683,7 +690,7 @@ unsigned ChessFieldPieces::nextMoveHistory() {
         QModelIndex bottomRight = createIndex(initialChessPieceIndex, 0);
         emit dataChanged(topLeft, bottomRight);
     } else {
-        rivalChessPiece = this->findByUniqueIndex(obtainedMovement->uniqueIndexOfFigurine, &rivalChessPieceIndex);
+        rivalChessPiece = this->findByPosition(obtainedMovement->endX, obtainedMovement->endY, &rivalChessPieceIndex);
         initialChessPiece->setCurrentXonField(obtainedMovement->endX);
         initialChessPiece->setCurrentYonField(obtainedMovement->endY);
         //this->movementInfoModel->removeItemByIndex(rivalChessPieceIndex);
@@ -692,7 +699,7 @@ unsigned ChessFieldPieces::nextMoveHistory() {
         this->allChessPiecesDisplayed.erase(this->allChessPiecesDisplayed.begin()+rivalChessPieceIndex);
         this->endRemoveRows();
         //update index after removing item
-        //findByPosition(toX, toY, &initialChessPieceIndex);
+        findByPosition(obtainedMovement->endX, obtainedMovement->endY, &initialChessPieceIndex);
         QModelIndex topLeft = createIndex(initialChessPieceIndex, 0);
         QModelIndex bottomRight = createIndex(initialChessPieceIndex, 0);
         emit dataChanged(topLeft, bottomRight);
@@ -703,39 +710,40 @@ unsigned ChessFieldPieces::nextMoveHistory() {
 }
 
 unsigned ChessFieldPieces::prevMoveHistory() {
-    uint16_t valueStep = this->historyMegaObject->prevMoveStep();
+    uint16_t valueStep0 = this->historyMegaObject->getCurrentDisplayedMove();
     History_SingleMovement* obtainedMovement = this->historyMegaObject->getcurrentMovementPtrByCurrentIndex();
-    if (obtainedMovement == nullptr) return valueStep;
+    if (obtainedMovement == nullptr) return valueStep0;
     unsigned int initialChessPieceIndex; unsigned int rivalChessPieceIndex;
-    ChessPieceOnField* initialChessPiece; ChessPieceOnField* rivalChessPiece;
+    ChessPieceOnField* initialChessPiece;
+    initialChessPiece = this->findByPosition(obtainedMovement->endX, obtainedMovement->endY, &initialChessPieceIndex);
     if (obtainedMovement->capturePerformed==0) {
-
-        initialChessPiece = this->findByPosition(obtainedMovement->startX, obtainedMovement->startY, &initialChessPieceIndex);
-        //there may be (on rare occasions) some collision: a figurine may be on position, but our data from file indicate that there was no capture
-        //TODO: handle this
-        initialChessPiece->setCurrentXonField(obtainedMovement->endX);
-        initialChessPiece->setCurrentYonField(obtainedMovement->endY);
+        initialChessPiece->setCurrentXonField(obtainedMovement->startX);
+        initialChessPiece->setCurrentYonField(obtainedMovement->startY);
         QModelIndex topLeft = createIndex(initialChessPieceIndex, 0);
         QModelIndex bottomRight = createIndex(initialChessPieceIndex, 0);
         emit dataChanged(topLeft, bottomRight);
     } else {
-        rivalChessPiece = this->findByUniqueIndex(obtainedMovement->uniqueIndexOfFigurine, &rivalChessPieceIndex);
-        initialChessPiece->setCurrentXonField(obtainedMovement->endX);
-        initialChessPiece->setCurrentYonField(obtainedMovement->endY);
-        //this->movementInfoModel->removeItemByIndex(rivalChessPieceIndex);
+        //rivalChessPiece = this->findByUniqueIndex(obtainedMovement->capturedUniqueIndex, &rivalChessPieceIndex);
+        History_SingleInitialStateOfFigurine* rivalChessPiece_MemoryOfTheFallen = this->historyMegaObject->getInitialStateByUniqueId(obtainedMovement->capturedUniqueIndex);
+        ChessPieceOnField rivalChessPiece = ChessPieceOnField(globalBehaviorCollection.at(rivalChessPiece_MemoryOfTheFallen->BehaviorType), rivalChessPiece_MemoryOfTheFallen->PathToImage);
+        rivalChessPiece.setCurrentXonField(obtainedMovement->endX); rivalChessPiece.setCurrentYonField(obtainedMovement->endY);
+        rivalChessPiece.setCurrentSideType(rivalChessPiece_MemoryOfTheFallen->SideType); rivalChessPiece.setUniqueId(rivalChessPiece_MemoryOfTheFallen->uniqueIndexOfFigurine);
 
-        this->beginRemoveRows(QModelIndex(),rivalChessPieceIndex,rivalChessPieceIndex);
-        this->allChessPiecesDisplayed.erase(this->allChessPiecesDisplayed.begin()+rivalChessPieceIndex);
-        this->endRemoveRows();
-        //update index after removing item
-        //findByPosition(toX, toY, &initialChessPieceIndex);
+        initialChessPiece->setCurrentXonField(obtainedMovement->startX); initialChessPiece->setCurrentYonField(obtainedMovement->startY);
+
+        //this->movementInfoModel->removeItemByIndex(rivalChessPieceIndex);
+        this->beginInsertRows(QModelIndex(), 0, 0);
+        this->allChessPiecesDisplayed.insert(this->allChessPiecesDisplayed.begin(),rivalChessPiece);
+        this->endInsertRows();
+        //update index after adding item
+        findByPosition(obtainedMovement->startX, obtainedMovement->startY, &initialChessPieceIndex);
         QModelIndex topLeft = createIndex(initialChessPieceIndex, 0);
         QModelIndex bottomRight = createIndex(initialChessPieceIndex, 0);
         emit dataChanged(topLeft, bottomRight);
     }
-
+    valueStep0 = this->historyMegaObject->prevMoveStep();
     delete obtainedMovement;
-    return valueStep;
+    return valueStep0;
 }
 void ChessFieldPieces::appendPieceOnField(ChessPieceOnField pieceToAppend) {
     this->allChessPiecesDisplayed.push_back(pieceToAppend);

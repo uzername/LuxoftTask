@@ -10,8 +10,9 @@ ApplicationWindow {
     width: 800
     height: 600
     property int squareSize: 70
-    property string currentTitleWindow: "Chess || Loaded story : %1"
+    property string currentTitleWindowTemplate: "Chess || Loaded story : %1"
     property string basicTitleWindow: "Chess"
+    property string currentTitleWindow: "Chess"
     //Use that somewhere else, but not here
 /*
     property var images: [
@@ -46,7 +47,7 @@ ApplicationWindow {
                 console.log("!!!");
                 mylogic.clearGameField();
                 JSON_QML_Interface.runReading(openHistoryFileDialog.fileUrl.toString());
-                currentTitleWindow = currentTitleWindow.arg(JSON_QML_Interface.getCurrentTimeStampFromFile());
+                currentTitleWindow = currentTitleWindowTemplate.arg(JSON_QML_Interface.getCurrentTimeStampFromFile());
                 mylogic.fillGameFieldFromInitialHistory();
                 mainWndChess.disableOrEnableGrabHandlers(false);
                 screenSwitchingGnome.state = "screen3"
@@ -321,14 +322,16 @@ ApplicationWindow {
            id: prevButton
            text: "Prev"
            onClicked: {
-                mylogic.prevMoveHistory();
+               var mvret = mylogic.prevMoveHistory();
+               console.log(mvret)
            }
         }
         Button {
            id: nextButton
            text: "Next"
            onClicked: {
-               mylogic.nextMoveHistory();
+               var mvret = mylogic.nextMoveHistory();
+               console.log(mvret)
            }
         }
     }

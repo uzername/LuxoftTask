@@ -54,6 +54,9 @@ public:
     uint16_t prevMoveStep();
     uint16_t nextMoveStep();
     History_SingleMovement* getcurrentMovementPtrByCurrentIndex();
+    History_SingleInitialStateOfFigurine *getInitialStateByUniqueId(unsigned in_uniqueId);
+    //get current movement index without a change
+    uint16_t getCurrentDisplayedMove() const;
 };
 
 //extern HistoryHandlerData currentGlobalHistory;

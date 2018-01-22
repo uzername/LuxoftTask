@@ -1,4 +1,9 @@
 #include "historyhandlerdata.h"
+uint16_t HistoryHandlerData::getCurrentDisplayedMove() const
+{
+    return currentDisplayedMove;
+}
+
 HistoryHandlerData::HistoryHandlerData() {
     this->history_initialChessPiecesPositions = std::vector<History_SingleInitialStateOfFigurine>();
     this->history_setOfMovements = std::vector<History_SingleMovement>();
@@ -61,6 +66,17 @@ History_SingleMovement *HistoryHandlerData::getcurrentMovementPtrByCurrentIndex(
     History_SingleMovement* movementToReturn = new History_SingleMovement;
     *movementToReturn = history_setOfMovements.at(this->currentDisplayedMove-1);
     return movementToReturn;
+}
+
+History_SingleInitialStateOfFigurine* HistoryHandlerData::getInitialStateByUniqueId(unsigned in_uniqueId) {
+    History_SingleInitialStateOfFigurine* valueToReturn = nullptr;
+    for (std::vector<History_SingleInitialStateOfFigurine>::iterator it = this->history_initialChessPiecesPositions.begin(); it!=this->history_initialChessPiecesPositions.end(); it++ ){
+        if (it->uniqueIndexOfFigurine!=in_uniqueId) {
+            continue;
+        }
+        return (&*it);
+    }
+    return valueToReturn;
 }
 
 //HistoryHandlerData currentGlobalHistory;

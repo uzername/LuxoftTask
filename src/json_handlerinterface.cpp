@@ -132,6 +132,7 @@ void JSON_HandlerInterface::obtainAllHistoryDataFromFile(std::__cxx11::string in
         movementToBeAdded.startY = itr->GetObject()["sY"].GetInt();
         movementToBeAdded.endY = itr->GetObject()["eY"].GetInt();
         movementToBeAdded.capturePerformed = itr->GetObject()["cP"].GetInt();
+        movementToBeAdded.capturedUniqueIndex = itr->GetObject()["cUI"].GetInt();
         this->historySameData->addSingleMovement(movementToBeAdded);
     }
     fclose(fp);
