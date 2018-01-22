@@ -28,7 +28,7 @@ public:
     /**
       * Run recording to file
       */
-    Q_INVOKABLE void runRecording();
+    Q_INVOKABLE void runRecording(QString in_filepath);
     /**
       * Run reading from file
       */

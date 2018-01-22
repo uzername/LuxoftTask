@@ -95,6 +95,8 @@ public:
      */
     ChessPieceOnField* findByPosition(int in_X, int in_Y);
     ChessPieceOnField* findByPosition(int in_X, int in_Y, unsigned int *inout_indexptr);
+
+    ChessPieceOnField* findByUniqueIndex(unsigned in_uIOF, unsigned int *inout_indexptr);
     /**
       * @brief Clears available moves. this routine may be called from child model, but let's keep all the calls here
       */
@@ -112,6 +114,10 @@ public:
     Q_INVOKABLE void fillGameField();
     Q_INVOKABLE void clearGameField();
     Q_INVOKABLE void fillGameFieldFromInitialHistory();
+    //returns the number of step
+    Q_INVOKABLE unsigned nextMoveHistory();
+    Q_INVOKABLE unsigned prevMoveHistory();
+
     ChessPieceSideTypes getCurrentMove() const;
     void setCurrentMove(const ChessPieceSideTypes &value);
     void increaseCurrentMove();

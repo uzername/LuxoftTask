@@ -44,8 +44,8 @@ JSON_HandlerInterface::JSON_HandlerInterface(): QObject() {
 void JSON_HandlerInterface::recordAllHistoryDataToFile(std::__cxx11::string in_pathToFile) {
 //write to file: http://rapidjson.org/md_doc_stream.html
 //write using sax parser: http://rapidjson.org/md_doc_sax.html
-
-    FILE* fp = fopen(in_pathToFile.c_str(), "wb");
+//skip unnecessary characters
+    FILE* fp = fopen(in_pathToFile.c_str()+8, "wb");
     char writeBuffer[65536];
     FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
     Writer<FileWriteStream> writer(os);
@@ -141,8 +141,8 @@ void JSON_HandlerInterface::signHistoryReadWritePact(HistoryHandlerData *in_Hist
     this->historySameData = in_HistoryMegaObject;
 }
 
-void JSON_HandlerInterface::runRecording() {
-    this->recordAllHistoryDataToFile("out.json");
+void JSON_HandlerInterface::runRecording(QString in_filepath) {
+    this->recordAllHistoryDataToFile(in_filepath.toStdString());
 }
 
 void JSON_HandlerInterface::runReading(QString in_filepath) {

@@ -36,6 +36,10 @@ class HistoryHandlerData {
 protected:
     std::vector<History_SingleInitialStateOfFigurine> history_initialChessPiecesPositions;
     std::vector<History_SingleMovement> history_setOfMovements;
+    /**
+     * @brief currentDisplayedMove : index of movement in history . 0 is invalid value, calculation starts with 1
+     */
+    uint16_t currentDisplayedMove;
 public:
     HistoryHandlerData();
     std::vector<History_SingleInitialStateOfFigurine>::iterator getStatesVectorIteratorBegin();
@@ -46,6 +50,10 @@ public:
     std::vector<History_SingleMovement>::iterator getMovementsVectorIteratorEnd();
     void addSingleMovement(History_SingleMovement in_SingleMovement);
     void quickCleanupAllHistory();
+    //change value currentDisplayedMove and return new value
+    uint16_t prevMoveStep();
+    uint16_t nextMoveStep();
+    History_SingleMovement* getcurrentMovementPtrByCurrentIndex();
 };
 
 //extern HistoryHandlerData currentGlobalHistory;

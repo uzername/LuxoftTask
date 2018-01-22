@@ -19,9 +19,18 @@ ApplicationWindow {
       {'imgPath' : "/images/black_pawn.svg"},
     ]
 */
+    function disableOrEnableGrabHandlers(in_boolState) {
+        // https://stackoverflow.com/questions/13270818/how-to-access-the-properties-of-a-repeaters-children-in-qml
+        for (var i=0; i<mylogic.rowCount(); i++) {
+            mmm.itemAt(i).childEnabled = in_boolState;
+        }
+        return;
+    }
+
+    //file dialogs run asynchronously, qt qml code executes after open() has been called without waiting dialog to close!
     // there is a nasty bug in file dialog:
     // https://bugreports.qt.io/browse/QTBUG-53707?page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel&showAll=true
-    // should update to latest version
+    // should update to latest version, Qt 5.10
     FileDialog {
         id:openHistoryFileDialog
         title: qsTr("A file to read from")
@@ -29,6 +38,7 @@ ApplicationWindow {
         nameFilters: [ "ChessData files (*.json)" ]
         folder:shortcuts.home
         onAccepted: {
+
             dialogHasBeenCancelled = false;
             console.log("You chose: " + openHistoryFileDialog.fileUrl.toString())
 
@@ -38,12 +48,26 @@ ApplicationWindow {
                 JSON_QML_Interface.runReading(openHistoryFileDialog.fileUrl.toString());
                 currentTitleWindow = currentTitleWindow.arg(JSON_QML_Interface.getCurrentTimeStampFromFile());
                 mylogic.fillGameFieldFromInitialHistory();
+                mainWndChess.disableOrEnableGrabHandlers(false);
                 screenSwitchingGnome.state = "screen3"
             }
 
         }
         onRejected: {
             dialogHasBeenCancelled = true;
+            console.log("Canceled")
+        }
+    }
+    FileDialog {
+        id: saveHistoryFileDialog
+        title: qsTr("A file to save")
+        nameFilters: [ "ChessData files (*.json)" ]
+        selectExisting: false
+        onAccepted: {
+            console.log("You chose: " + saveHistoryFileDialog.fileUrl.toString());
+            JSON_QML_Interface.runRecording(saveHistoryFileDialog.fileUrl.toString());
+        }
+        onRejected: {
             console.log("Canceled")
         }
     }
@@ -61,6 +85,7 @@ ApplicationWindow {
                 PropertyChanges { target: loadButton; visible: true   }
                 PropertyChanges { target: prevAndNext; visible: false }
                 PropertyChanges { target: mainWndChess; title: qsTr(basicTitleWindow) }
+                // PropertyChanges { target: mouseHandlingArea; enabled:true }
             },
             State {
                 name: "screen2"
@@ -70,6 +95,7 @@ ApplicationWindow {
                 PropertyChanges { target: loadButton;  visible: false  }
                 PropertyChanges { target: prevAndNext; visible: false  }
                 PropertyChanges { target: mainWndChess; title: qsTr(basicTitleWindow) }
+                // PropertyChanges { target: mouseHandlingArea; enabled:true }
             },
             State {
                 name: "screen3"
@@ -79,6 +105,7 @@ ApplicationWindow {
                 PropertyChanges { target: loadButton;  visible: true  }
                 PropertyChanges { target: prevAndNext; visible: true  }
                 PropertyChanges { target: mainWndChess;  title: qsTr(currentTitleWindow) }
+                // PropertyChanges { target: mouseHandlingArea; enabled:false }
             }
         ]
     }
@@ -115,6 +142,7 @@ ApplicationWindow {
       Repeater {
          //sort of qlistmodel
         model: mylogic
+        id: mmm
 
         Image { //a chess piece on gamefield
           height: squareSize
@@ -124,16 +152,21 @@ ApplicationWindow {
           x: squareSize*PositionX
           y: squareSize*PositionY
 
+          property bool childEnabled: true
           source: display /*images[type].imgPath*/
           //create mouseArea to handle mouse events
           MouseArea {
             anchors.fill: parent
             drag.target: parent
+            id: mouseHandlingArea
+
+            enabled: parent.childEnabled
 
             property int startX: 0
             property int startY: 0
 
             onPressed: {
+             if (screenSwitchingGnome.state != "screen3") {
               startX = parent.x;
               startY = parent.y;
                 var preparedX = startX / squareSize;
@@ -153,10 +186,11 @@ ApplicationWindow {
                 }
                 */
                 mylogic.activateDisplayAvailableMoves(preparedX, preparedY);
-
+              }
             }
 
             onReleased: {
+             if (screenSwitchingGnome.state!="screen3") {
               var fromX = startX / squareSize;
               var fromY = startY / squareSize;
               var useMouseX = mouseX; var useMouseY = mouseY;
@@ -190,7 +224,7 @@ ApplicationWindow {
 
               //activateClearModelData() complains "ReferenceError: mylogic is not defined". Just do not use beginResetModel in move(...)
                 mylogic.activateClearModelData();
-
+              }
             }
           }
         }
@@ -215,7 +249,9 @@ ApplicationWindow {
 
         if ((screenSwitchingGnome.state == "screen1")||(screenSwitchingGnome.state == "")||(screenSwitchingGnome.state == "screen3")) {
             screenSwitchingGnome.state = "screen2";
+            mylogic.clearGameField();
             mylogic.fillGameField();
+            mainWndChess.disableOrEnableGrabHandlers(true);
         }
 
       }
@@ -271,7 +307,8 @@ ApplicationWindow {
        text:"Save"
        visible:false;
        onClicked: {
-            JSON_QML_Interface.runRecording();
+            saveHistoryFileDialog.open();
+
        }
 
     }
@@ -283,10 +320,16 @@ ApplicationWindow {
         Button {
            id: prevButton
            text: "Prev"
+           onClicked: {
+                mylogic.prevMoveHistory();
+           }
         }
         Button {
            id: nextButton
            text: "Next"
+           onClicked: {
+               mylogic.nextMoveHistory();
+           }
         }
     }
 
